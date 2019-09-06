@@ -44,7 +44,7 @@ func TestHTTPPostSecured(t *testing.T) {
 		Type:      "limit",
 		Price:     99999999999,
 		Quantity:  0.01,
-		Timestamp: strconv.FormatInt(time.Now().Unix()*1000,10),
+		Timestamp: time.Now().Unix()*1000,
 	}
 
 	data,err := json.Marshal(order)

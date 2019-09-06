@@ -4,7 +4,6 @@ import (
 	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
-	"strconv"
 	"testing"
 	"time"
 )
@@ -55,7 +54,7 @@ func TestOrder(t *testing.T) {
 		Type:      "limit",
 		Price:     99999999999,
 		Quantity:  0.01,
-		Timestamp: strconv.FormatInt(time.Now().Unix()*1000,10),
+		Timestamp:time.Now().Unix()*1000,
 	}
 
 	infos, err := tradeio.Order(order);
@@ -82,7 +81,7 @@ func TestCancel(t *testing.T) {
 		Type:      "limit",
 		Price:     99999999999,
 		Quantity:  0.01,
-		Timestamp: strconv.FormatInt(time.Now().Unix()*1000,10),
+		Timestamp: time.Now().Unix()*1000,
 	}
 
 	orderResp, err := tradeio.Order(order);

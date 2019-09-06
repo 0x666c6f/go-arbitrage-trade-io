@@ -5,9 +5,12 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"github.com/florianpautot/go-arbitrage-trade-io/model"
+	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
+	"math"
+	"strings"
 )
 
 //LoadConfig :
@@ -36,4 +39,48 @@ func GenerateSignature(input string, secret string) string {
 	hmac512.Write([]byte(input))
 	signature := hex.EncodeToString(hmac512.Sum(nil))
 	return signature;
+}
+
+func FormatBalance(balances []responses.Balance) map[string]responses.Balance {
+	formattedBalance := make(map[string]responses.Balance)
+	for _,balance := range balances {
+		formattedBalance[balance.Asset] = balance
+	}
+	return formattedBalance
+}
+
+func FormatInfos(infos []responses.Symbol) map[string]responses.Symbol {
+	formattedInfos := make(map[string]responses.Symbol)
+	for _,info := range infos {
+		formattedInfos[info.Symbol] = info
+	}
+	return formattedInfos
+}
+
+func FormatTickers(tickers []responses.Ticker) (map[string]responses.Ticker, []string) {
+	formattedTickers := make(map[string]responses.Ticker)
+	var symbols []string
+	for _,ticker := range tickers {
+		formattedTickers[ticker.Symbol] = ticker
+		symbols = append(symbols, strings.Split(ticker.Symbol,"_")[0])
+	}
+	return formattedTickers,symbols
+}
+
+func RoundUp(input float64, places int) (newVal float64) {
+	var round float64
+	pow := math.Pow(10, float64(places))
+	digit := pow * input
+	round = math.Ceil(digit)
+	newVal = round / pow
+	return
+}
+
+func RoundDown(input float64, places int) (newVal float64) {
+	var round float64
+	pow := math.Pow(10, float64(places))
+	digit := pow * input
+	round = math.Floor(digit)
+	newVal = round / pow
+	return
 }

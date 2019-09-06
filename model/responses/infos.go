@@ -1,8 +1,8 @@
 package responses
 
 type Infos struct {
-	Code      int64    `json:"code"`
-	Timestamp int64    `json:"timestamp"`
+	Code      int    `json:"code"`
+	Timestamp int    `json:"timestamp"`
 	Symbols   []Symbol `json:"symbols"`
 }
 
@@ -10,7 +10,7 @@ type Symbol struct {
 	Symbol              string `json:"symbol"`
 	Status              string `json:"status"`
 	BaseAsset           string `json:"baseAsset"`
-	BaseAssetPrecision  int64  `json:"baseAssetPrecision"`
+	BaseAssetPrecision  int  `json:"baseAssetPrecision"`
 	QuoteAsset          string `json:"quoteAsset"`
-	QuoteAssetPrecision int64  `json:"quoteAssetPrecision"`
+	QuoteAssetPrecision int  `json:"quoteAssetPrecision"`
 }

@@ -45,4 +45,4 @@ MinProfit: 1.003
 MinUSDT: 10
 OrderMinuteLimit: 600
 StartSecond: 0
-Timeout: 0
+Timeout: 100ms

@@ -1,6 +1,6 @@
 package responses
 
 type CancelResponse struct {
-	Code      int64 `json:"code"`
-	Timestamp int64 `json:"timestamp"`
+	Code      int `json:"code"`
+	Timestamp int `json:"timestamp"`
 }

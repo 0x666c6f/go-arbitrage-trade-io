@@ -1,9 +1,9 @@
 package gocryptobot_tests
 
 import (
-	"fmt"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"github.com/golang/glog"
 	"testing"
 )
 
@@ -29,7 +29,7 @@ func TestLoadConfig(t *testing.T) {
 	if config.MinProfit != 1.003 {
 		t.Error("Expected MinProfit to equal", 1, "but instead got ", config.MinProfit)
 	}
-	fmt.Println(config)
+	glog.Infoln(config)
 }
 
 func TestFormatBalances(t *testing.T) {

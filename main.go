@@ -1,4 +1,4 @@
-package gocryptobot
+package main
 
 import (
 	"fmt"

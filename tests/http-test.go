@@ -2,10 +2,10 @@ package gocryptobot_tests
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/florianpautot/go-arbitrage-trade-io/http"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"github.com/golang/glog"
 	"strconv"
 	"testing"
 	"time"
@@ -19,7 +19,7 @@ func TestHTTPGetUnsecured(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	fmt.Println(res)
+	glog.Info(res)
 }
 
 func TestHTTPGetSecured(t *testing.T) {
@@ -31,7 +31,7 @@ func TestHTTPGetSecured(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	fmt.Println(res)
+	glog.Info(res)
 }
 
 func TestHTTPPostSecured(t *testing.T) {
@@ -55,7 +55,7 @@ func TestHTTPPostSecured(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	fmt.Println(res)
+	glog.Info(res)
 }
 
 func TestHTTPDelete(t *testing.T) {
@@ -67,5 +67,5 @@ func TestHTTPDelete(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	fmt.Println(res)
+	glog.Info(res)
 }

@@ -1,11 +1,11 @@
 package arbitrage
 
 import (
-	"fmt"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"github.com/golang/glog"
 	"sort"
 	"time"
 )
@@ -51,7 +51,7 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 				}
 				orderAResp, err := tradeio.Order(orderA)
 				if err != nil {
-					fmt.Println(err.Error())
+					glog.Infoln(err.Error())
 					return
 				}
 
@@ -72,7 +72,7 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 					}
 					orderBResp, err := tradeio.Order(orderB)
 					if err != nil {
-						fmt.Println(err.Error())
+						glog.Error(err.Error())
 						return
 					}
 
@@ -93,7 +93,7 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 						}
 						_, err := tradeio.Order(orderC)
 						if err != nil {
-							fmt.Println(err.Error())
+							glog.Error(err.Error())
 							return
 						}
 					}
@@ -103,7 +103,7 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 						TotalMinuteOrderWeight++
 						_, err := tradeio.CancelOrder(orderAResp.Order.OrderID)
 						if err != nil {
-							fmt.Println(err.Error())
+							glog.Infoln(err.Error())
 						}
 					}
 				}

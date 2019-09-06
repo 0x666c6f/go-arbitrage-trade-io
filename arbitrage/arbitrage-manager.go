@@ -1,11 +1,11 @@
 package arbitrage
 
 import (
-	"fmt"
 	"github.com/florianpautot/go-arbitrage-trade-io/model"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"github.com/golang/glog"
 	"time"
 )
 
@@ -20,14 +20,14 @@ var valEthBTC float64
 
 func Start(){
 	restartDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute(),Config.StartSecond,0,time.UTC)
-	fmt.Println("Starting arbitrage")
+	glog.Info("Starting arbitrage")
 
 	for TotalMinuteWeight < (Config.APIMinuteLimit - 23) && Config.EndSecond > time.Now().Second() {
 		launchArbitrages()
 		if Config.Timeout != ""{
 			duration,err:= time.ParseDuration(Config.Timeout)
 			if err != nil {
-				fmt.Errorf(err.Error())
+				glog.Error(err.Error())
 			}
 			time.Sleep(duration)
 		}
@@ -35,7 +35,7 @@ func Start(){
 
 	balances, err := tradeio.Account()
 	if err != nil {
-		fmt.Errorf(err.Error())
+		glog.Error(err.Error())
 	}
 
 	if len(balances.Balances) > 0 {
@@ -49,9 +49,9 @@ func Start(){
 	TotalMinuteOrderWeight = 0;
 	if time.Now().Second() < restartDate.Second() {
 		sleepTime := restartDate.Sub(time.Now())
-		fmt.Println("Will sleep", sleepTime.Seconds(), "to reset minute weight");
+		glog.Info("Will sleep", sleepTime.Seconds(), "to reset minute weight");
 		time.Sleep(sleepTime)
-		fmt.Println("Waking up, sleep is over !");
+		glog.Info("Waking up, sleep is over !");
 	}
 	Start()
 }
@@ -59,15 +59,15 @@ func Start(){
 func launchArbitrages(){
 	tickers,err := tradeio.Tickers()
 	if err != nil{
-		fmt.Errorf(err.Error())
+		glog.Error(err.Error())
 	}
 	TotalMinuteWeight +=20
 	if tickers.Code != 0 {
-		fmt.Println("Error while retrieving tickers, will sleep until next loop")
+		glog.Info("Error while retrieving tickers, will sleep until next loop")
 		wakeUp := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute(),Config.StartSecond+1,0,time.UTC)
-		fmt.Println("Will sleep",wakeUp)
+		glog.Info("Will sleep",wakeUp)
 		time.Sleep(wakeUp.Sub(time.Now()))
-		fmt.Println("Waking up, back to work !")
+		glog.Info("Waking up, back to work !")
 		return
 	}
 

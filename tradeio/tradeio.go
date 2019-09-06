@@ -90,7 +90,19 @@ func ClosedOrders(symbol string, start int, end int, page int, perPage int) {
 }
 
 //Account :
-func Account() {
+func Account() (responses.Balances, error){
+	var balances responses.Balances
+	http.Config = Config
+	res, err := http.HTTPGet(Config.APIEndpoint+"/api/v1/account","?ts="+strconv.FormatInt(time.Now().Unix()*1000,10),true)
+	if err != nil {
+		return responses.Balances{}, err
+	}
 
+	err = json.Unmarshal(res, &balances)
+	if err != nil {
+		return responses.Balances{}, err
+	}
+
+	return balances, nil
 }
 

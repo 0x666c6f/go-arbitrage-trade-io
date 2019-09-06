@@ -61,7 +61,7 @@ func HTTPPost(url string, data []byte) ([]byte, error){
 
 //HTTPDelete :
 func HTTPDelete(url string, args string) ([]byte, error){
-	req, err := http.NewRequest("DELETE", url, nil)
+	req, err := http.NewRequest("DELETE", url+args, nil)
 	req.Header.Add("content-type","application/json")
 	req.Header.Add("Key",Config.APIKey)
 	req.Header.Add("Sign", utils.GenerateSignature(args,Config.APISecret))

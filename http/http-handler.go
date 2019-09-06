@@ -3,8 +3,8 @@ package http
 import (
 	"bytes"
 	"crypto/tls"
-	"github.com/florianpautot/model"
-	"github.com/florianpautot/utils"
+	"github.com/florianpautot/go-arbitrage-trade-io/model"
+	"github.com/florianpautot/go-arbitrage-trade-io/utils"
 	"io/ioutil"
 	"net/http"
 )

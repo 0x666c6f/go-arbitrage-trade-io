@@ -2,7 +2,7 @@ package gocryptobot_tests
 
 import (
 	"fmt"
-	"github.com/florianpautot/utils"
+	"github.com/florianpautot/go-arbitrage-trade-io/utils"
 	"testing"
 )
 

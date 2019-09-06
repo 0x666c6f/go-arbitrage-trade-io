@@ -4,7 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha512"
 	"encoding/hex"
-	"github.com/florianpautot/model"
+	"github.com/florianpautot/go-arbitrage-trade-io/model"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"

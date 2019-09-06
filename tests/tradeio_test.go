@@ -1,9 +1,9 @@
 package gocryptobot_tests
 
 import (
-	"github.com/florianpautot/model/requests"
-	"github.com/florianpautot/tradeio"
-	"github.com/florianpautot/utils"
+	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
+	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
+	"github.com/florianpautot/go-arbitrage-trade-io/utils"
 	"strconv"
 	"testing"
 	"time"

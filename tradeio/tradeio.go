@@ -2,10 +2,10 @@ package tradeio
 
 import (
 	"encoding/json"
-	"github.com/florianpautot/http"
-	"github.com/florianpautot/model"
-	"github.com/florianpautot/model/requests"
-	"github.com/florianpautot/model/responses"
+	"github.com/florianpautot/go-arbitrage-trade-io/http"
+	"github.com/florianpautot/go-arbitrage-trade-io/model"
+	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
+	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"strconv"
 	"time"
 )

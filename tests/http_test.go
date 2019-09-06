@@ -3,9 +3,9 @@ package gocryptobot_tests
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/florianpautot/http"
-	"github.com/florianpautot/model/requests"
-	"github.com/florianpautot/utils"
+	"github.com/florianpautot/go-arbitrage-trade-io/http"
+	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
+	"github.com/florianpautot/go-arbitrage-trade-io/utils"
 	"strconv"
 	"testing"
 	"time"

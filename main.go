@@ -1,0 +1,5 @@
+package gocryptobot
+
+func main() {
+
+}

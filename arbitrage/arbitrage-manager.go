@@ -99,12 +99,11 @@ func launchArbitrages(){
 	for index := 0; index < len(symbols); index++ {
 		symbol := symbols[index]
 		BtcEthBtcArbitrage(formattedTickers,Infos,symbol)
-		//	await manageArbitrageUSDT_X_Intermediate_USDT(formattedTickers, infos, ticker, "btc");
-		//	await manageArbitrageBTCtoXtoETHtoBTC(formattedTickers, infos, ticker);
-		//	await manageArbitrageSource_X_Intermediate_Source(formattedTickers, infos, ticker, "eth", "btc");
-		//	await manageArbitrageSource_X_Intermediate_Source(formattedTickers, infos, ticker, "btc", "usdt");
-		//	await manageArbitrageSource_X_Intermediate_Source(formattedTickers, infos, ticker, "eth", "usdt");
-		//	await manageArbitrageUSDT_X_Intermediate_USDT(formattedTickers, infos, ticker, "eth");
+		UsdtToBtcEthToUsdt(formattedTickers,Infos,symbol,"eth")
+		UsdtToBtcEthToUsdt(formattedTickers,Infos,symbol,"btc")
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"eth","btc")
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"btc","usdt")
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"eth","usdt")
 	}
 
 }

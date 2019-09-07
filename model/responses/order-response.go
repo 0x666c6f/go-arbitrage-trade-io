@@ -8,23 +8,23 @@ type OrderResponse struct {
 
 type Order struct {
 	OrderID         string `json:"orderId"`
-	Total           float64 `json:"total"`
+	Total           string `json:"total"`
 	OrderType       string `json:"orderType"`
-	Commission      float64 `json:"commission"`
+	Commission      string `json:"commission"`
 	CreatedAt       string `json:"createdAt"`
-	UnitsFilled     float64 `json:"unitsFilled"`
+	UnitsFilled     string `json:"unitsFilled"`
 	IsPending       bool   `json:"isPending"`
 	Status          string `json:"status"`
 	Type            string `json:"type"`
-	RequestedAmount float64 `json:"requestedAmount"`
-	BaseAmount      float64 `json:"baseAmount"`
-	QuoteAmount     float64 `json:"quoteAmount"`
-	Price           float64 `json:"price"`
+	RequestedAmount string `json:"requestedAmount"`
+	BaseAmount      string `json:"baseAmount"`
+	QuoteAmount     string `json:"quoteAmount"`
+	Price           string `json:"price"`
 	IsLimit         bool   `json:"isLimit"`
-	LoanRate        float64 `json:"loanRate"`
-	RateStop        float64 `json:"rateStop"`
+	LoanRate        string `json:"loanRate"`
+	RateStop        string `json:"rateStop"`
 	Instrument      string `json:"instrument"`
-	RequestedPrice  float64 `json:"requestedPrice"`
-	RemainingAmount float64 `json:"remainingAmount"`
+	RequestedPrice  string `json:"requestedPrice"`
+	RemainingAmount string `json:"remainingAmount"`
 }
 

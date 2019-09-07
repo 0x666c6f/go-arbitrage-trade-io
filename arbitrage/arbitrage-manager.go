@@ -6,6 +6,7 @@ import (
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
 	"github.com/golang/glog"
+	"strconv"
 	"time"
 )
 
@@ -19,7 +20,7 @@ var valETH float64
 var valEthBTC float64
 
 func Start(){
-	restartDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute(),Config.StartSecond,0,time.UTC)
+	restartDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+1,Config.StartSecond,0,time.Local)
 	glog.Info("Starting arbitrage")
 
 	for TotalMinuteWeight < (Config.APIMinuteLimit - 23) && Config.EndSecond > time.Now().Second() {
@@ -40,14 +41,23 @@ func Start(){
 
 	if len(balances.Balances) > 0 {
 		formattedBalances := utils.FormatBalance(balances.Balances)
-		Config.MaxBTC = formattedBalances["btc"].Available;
-		Config.MaxUSDT = formattedBalances["usdt"].Available;
-		Config.MaxETH = formattedBalances["eth"].Available;
+		Config.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
+		if err != nil {
+			glog.Error(err.Error())
+		}
+		Config.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
+		if err != nil {
+			glog.Error(err.Error())
+		}
+		Config.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
+		if err != nil {
+			glog.Error(err.Error())
+		}
 	}
 
 	TotalMinuteWeight = 0;
 	TotalMinuteOrderWeight = 0;
-	if time.Now().Second() < restartDate.Second() {
+	if time.Now().Before(restartDate) {
 		sleepTime := restartDate.Sub(time.Now())
 		glog.Info("Will sleep", sleepTime.Seconds(), "to reset minute weight");
 		time.Sleep(sleepTime)
@@ -57,6 +67,7 @@ func Start(){
 }
 
 func launchArbitrages(){
+	glog.Info("Launching arbitrages")
 	tickers,err := tradeio.Tickers()
 	if err != nil{
 		glog.Error(err.Error())
@@ -64,7 +75,7 @@ func launchArbitrages(){
 	TotalMinuteWeight +=20
 	if tickers.Code != 0 {
 		glog.Info("Error while retrieving tickers, will sleep until next loop")
-		wakeUp := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute(),Config.StartSecond+1,0,time.UTC)
+		wakeUp := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute(),Config.StartSecond+1,0,time.Local)
 		glog.Info("Will sleep",wakeUp)
 		time.Sleep(wakeUp.Sub(time.Now()))
 		glog.Info("Waking up, back to work !")
@@ -72,9 +83,18 @@ func launchArbitrages(){
 	}
 
 	formattedTickers,symbols := utils.FormatTickers(tickers.Tickers)
-	valBTC = formattedTickers["btc_usdt"].AskPrice
-	valETH = formattedTickers["eth_usdt"].AskPrice
-	valEthBTC = formattedTickers["eth_btc"].AskPrice
+	valBTC,err = strconv.ParseFloat(formattedTickers["btc_usdt"].AskPrice,64)
+	if err != nil{
+		glog.Error(err.Error())
+	}
+	valETH,err = strconv.ParseFloat(formattedTickers["eth_usdt"].AskPrice,64)
+	if err != nil{
+		glog.Error(err.Error())
+	}
+	valEthBTC,err = strconv.ParseFloat(formattedTickers["eth_btc"].AskPrice,64)
+	if err != nil{
+		glog.Error(err.Error())
+	}
 
 	for index := 0; index < len(symbols); index++ {
 		symbol := symbols[index]

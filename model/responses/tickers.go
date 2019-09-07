@@ -8,14 +8,14 @@ type Tickers struct {
 
 type Ticker struct {
 	Symbol      string `json:"symbol"`
-	AskPrice    float64 `json:"askPrice"`
-	AskQty      float64 `json:"askQty"`
-	BidPrice    float64 `json:"bidPrice"`
-	BidQty      float64 `json:"bidQty"`
-	LastPrice   float64 `json:"lastPrice"`
-	LastQty     float64 `json:"lastQty"`
-	Volume      float64 `json:"volume"`
-	QuoteVolume float64 `json:"quoteVolume"`
+	AskPrice    string `json:"askPrice"`
+	AskQty      string `json:"askQty"`
+	BidPrice    string `json:"bidPrice"`
+	BidQty      string `json:"bidQty"`
+	LastPrice   string `json:"lastPrice"`
+	LastQty     string `json:"lastQty"`
+	Volume      string `json:"volume"`
+	QuoteVolume string `json:"quoteVolume"`
 	OpenTime    int  `json:"openTime"`
 	CloseTime   int  `json:"closeTime"`
 }

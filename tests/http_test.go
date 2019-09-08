@@ -19,7 +19,7 @@ func TestHTTPGetUnsecured(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	glog.Info(res)
+	glog.V(2).Info(res)
 }
 
 func TestHTTPGetSecured(t *testing.T) {
@@ -31,7 +31,7 @@ func TestHTTPGetSecured(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	glog.Info(res)
+	glog.V(2).Info(res)
 }
 
 func TestHTTPPostSecured(t *testing.T) {
@@ -55,7 +55,7 @@ func TestHTTPPostSecured(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	glog.Info(res)
+	glog.V(2).Info(res)
 }
 
 func TestHTTPDelete(t *testing.T) {
@@ -67,5 +67,5 @@ func TestHTTPDelete(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	glog.Info(res)
+	glog.V(2).Info(res)
 }

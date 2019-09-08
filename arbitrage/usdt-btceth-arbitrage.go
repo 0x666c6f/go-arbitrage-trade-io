@@ -26,27 +26,27 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 
 		askUSDT,err := strconv.ParseFloat(tickerUSDT.AskPrice,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		askUSDTQty,err := strconv.ParseFloat(tickerUSDT.AskQty,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		bidIntermediate,err := strconv.ParseFloat(tickerIntermediate.BidPrice,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		bidIntermediateQty,err := strconv.ParseFloat(tickerIntermediate.BidQty,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		bidIntermediateUSDT, err := strconv.ParseFloat(tickerIntermediateUSDT.BidPrice,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		if bidIntermediate > 0 &&
@@ -54,7 +54,7 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 			askUSDT > 0{
 
 			bonus := bidIntermediateUSDT * bidIntermediate / askUSDT
-			glog.Info(symbol, " Bonus = ", bonus)
+			glog.V(2).Info(symbol, " Bonus = ", bonus)
 
 
 			if bonus > Config.MinProfit {
@@ -92,22 +92,22 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 					}
 					orderAResp, err := tradeio.Order(orderA)
 					if err != nil {
-						glog.Error(err.Error())
+						glog.V(2).Info(err.Error())
 						return
 					}
 
-					glog.Info(symbol, " Order A = ", orderAResp)
+					glog.V(2).Info(symbol, " Order A = ", orderAResp)
 
 					if orderAResp.Code == 0 && orderAResp.Order.Status == "Completed" {
 						price = bidIntermediate
 						orderAAmount,err := strconv.ParseFloat(orderAResp.Order.BaseAmount,64)
 						if err != nil {
-							glog.Error(err.Error())
+							glog.V(2).Info(err.Error())
 							return
 						}
 						orderACommission, err := strconv.ParseFloat(orderAResp.Order.Commission,64)
 						if err != nil {
-							glog.Error(err.Error())
+							glog.V(2).Info(err.Error())
 							return
 						}
 						qty = utils.RoundDown(orderAAmount-orderACommission, precIntermediate)
@@ -125,21 +125,21 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 						}
 						orderBResp, err := tradeio.Order(orderB)
 						if err != nil {
-							glog.Error(err.Error())
+							glog.V(2).Info(err.Error())
 							return
 						}
-						glog.Info(symbol, " Order B = ", orderBResp)
+						glog.V(2).Info(symbol, " Order B = ", orderBResp)
 
 						if orderBResp.Code == 0 && orderBResp.Order.Status == "Completed" {
 
 							orderBAmount,err := strconv.ParseFloat(orderBResp.Order.Total,64)
 							if err != nil {
-								glog.Error(err.Error())
+								glog.V(2).Info(err.Error())
 								return
 							}
 							orderBCommission, err := strconv.ParseFloat(orderAResp.Order.Commission,64)
 							if err != nil {
-								glog.Error(err.Error())
+								glog.V(2).Info(err.Error())
 								return
 							}
 							price = bidIntermediateUSDT
@@ -158,17 +158,17 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 							}
 							orderCResp, err := tradeio.Order(orderC)
 							if err != nil {
-								glog.Error(err.Error())
+								glog.V(2).Info(err.Error())
 								return
 							}
 
-							glog.Info(symbol, " Order C = ", orderCResp)
+							glog.V(2).Info(symbol, " Order C = ", orderCResp)
 
 						}
 					} else {
 						orderAfilled,err := strconv.ParseFloat(orderAResp.Order.UnitsFilled,64)
 						if err != nil {
-							glog.Error(err.Error())
+							glog.V(2).Info(err.Error())
 							return
 						}
 						if orderAResp.Code == 0 && orderAResp.Order.Status == "Working" && orderAfilled <= 0{
@@ -176,7 +176,7 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 							TotalMinuteOrderWeight++
 							_, err := tradeio.CancelOrder(orderAResp.Order.OrderID)
 							if err != nil {
-								glog.Infoln(err.Error())
+								glog.V(2).Infoln(err.Error())
 							}
 						}
 					}

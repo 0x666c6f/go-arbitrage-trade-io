@@ -21,14 +21,14 @@ var valEthBTC float64
 
 func Start(){
 	restartDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+1,Config.StartSecond,0,time.Local)
-	glog.Info("Starting arbitrage")
+	glog.V(1).Info("Starting arbitrage")
 
 	for TotalMinuteWeight < (Config.APIMinuteLimit - 23) && Config.EndSecond > time.Now().Second() {
 		launchArbitrages()
 		if Config.Timeout != ""{
 			duration,err:= time.ParseDuration(Config.Timeout)
 			if err != nil {
-				glog.Error(err.Error())
+				glog.V(1).Info(err.Error())
 			}
 			time.Sleep(duration)
 		}
@@ -36,22 +36,22 @@ func Start(){
 
 	balances, err := tradeio.Account()
 	if err != nil {
-		glog.Error(err.Error())
+		glog.V(1).Info(err.Error())
 	}
 
 	if len(balances.Balances) > 0 {
 		formattedBalances := utils.FormatBalance(balances.Balances)
 		Config.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(1).Info(err.Error())
 		}
 		Config.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(1).Info(err.Error())
 		}
 		Config.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(1).Info(err.Error())
 		}
 	}
 
@@ -59,41 +59,41 @@ func Start(){
 	TotalMinuteOrderWeight = 0;
 	if time.Now().Before(restartDate) {
 		sleepTime := restartDate.Sub(time.Now())
-		glog.Info("Will sleep", sleepTime.Seconds(), "to reset minute weight");
+		glog.V(1).Info("Will sleep", sleepTime.Seconds(), "to reset minute weight");
 		time.Sleep(sleepTime)
-		glog.Info("Waking up, sleep is over !");
+		glog.V(1).Info("Waking up, sleep is over !");
 	}
 	Start()
 }
 
 func launchArbitrages(){
-	glog.Info("Launching arbitrages")
+	glog.V(1).Info("Launching arbitrages")
 	tickers,err := tradeio.Tickers()
 	if err != nil{
-		glog.Error(err.Error())
+		glog.V(1).Info(err.Error())
 	}
 	TotalMinuteWeight +=20
 	if tickers.Code != 0 {
-		glog.Info("Error while retrieving tickers, will sleep until next loop")
+		glog.V(1).Info("Error while retrieving tickers, will sleep until next loop")
 		wakeUp := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute(),Config.StartSecond+1,0,time.Local)
-		glog.Info("Will sleep",wakeUp)
+		glog.V(1).Info("Will sleep",wakeUp)
 		time.Sleep(wakeUp.Sub(time.Now()))
-		glog.Info("Waking up, back to work !")
+		glog.V(1).Info("Waking up, back to work !")
 		return
 	}
 
 	formattedTickers,symbols := utils.FormatTickers(tickers.Tickers)
 	valBTC,err = strconv.ParseFloat(formattedTickers["btc_usdt"].AskPrice,64)
 	if err != nil{
-		glog.Error(err.Error())
+		glog.V(1).Info(err.Error())
 	}
 	valETH,err = strconv.ParseFloat(formattedTickers["eth_usdt"].AskPrice,64)
 	if err != nil{
-		glog.Error(err.Error())
+		glog.V(1).Info(err.Error())
 	}
 	valEthBTC,err = strconv.ParseFloat(formattedTickers["eth_btc"].AskPrice,64)
 	if err != nil{
-		glog.Error(err.Error())
+		glog.V(1).Info(err.Error())
 	}
 
 	for index := 0; index < len(symbols); index++ {

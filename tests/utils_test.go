@@ -29,7 +29,7 @@ func TestLoadConfig(t *testing.T) {
 	if config.MinProfit != 1.003 {
 		t.Error("Expected MinProfit to equal", 1, "but instead got ", config.MinProfit)
 	}
-	glog.Infoln(config)
+	glog.V(2).Infoln(config)
 }
 
 func TestFormatBalances(t *testing.T) {

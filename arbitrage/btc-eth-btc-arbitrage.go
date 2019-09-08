@@ -26,34 +26,34 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 
 		askBtc,err := strconv.ParseFloat(tickerBTC.AskPrice,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		askBtcQty,err := strconv.ParseFloat(tickerBTC.AskQty,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		bidEth,err := strconv.ParseFloat(tickerETH.BidPrice,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		bidEthQty,err := strconv.ParseFloat(tickerETH.BidQty,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		bidEthBtc, err := strconv.ParseFloat(tickerEthBtc.BidPrice,64)
 		if err != nil {
-			glog.Error(err.Error())
+			glog.V(2).Info(err.Error())
 			return
 		}
 		if bidEthBtc > 0 &&
 			askBtc > 0 &&
 			bidEth > 0{
 			bonus := bidEth * bidEthBtc / askBtc
-			glog.Info(symbol, " Bonus = ", bonus)
+			glog.V(2).Info(symbol, " Bonus = ", bonus)
 
 			if bonus > Config.MinProfit {
 				if askBtc*askBtcQty > Config.MinBTC &&
@@ -78,21 +78,21 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 					}
 					orderAResp, err := tradeio.Order(orderA)
 					if err != nil {
-						glog.Error(err.Error())
+						glog.V(2).Info(err.Error())
 						return
 					}
-					glog.Info(symbol, " Order A = ", orderAResp)
+					glog.V(2).Info(symbol, " Order A = ", orderAResp)
 
 					if orderAResp.Code == 0 && orderAResp.Order.Status == "Completed" {
 						price = bidEth
 						orderAAmount,err := strconv.ParseFloat(orderAResp.Order.BaseAmount,64)
 						if err != nil {
-							glog.Error(err.Error())
+							glog.V(2).Info(err.Error())
 							return
 						}
 						orderACommission, err := strconv.ParseFloat(orderAResp.Order.Commission,64)
 						if err != nil {
-							glog.Error(err.Error())
+							glog.V(2).Info(err.Error())
 							return
 						}
 						qty = utils.RoundDown(orderAAmount-orderACommission, precETH)
@@ -110,20 +110,20 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 						}
 						orderBResp, err := tradeio.Order(orderB)
 						if err != nil {
-							glog.Error(err.Error())
+							glog.V(2).Info(err.Error())
 							return
 						}
-						glog.Info(symbol, " Order B = ", orderBResp)
+						glog.V(2).Info(symbol, " Order B = ", orderBResp)
 
 						if orderBResp.Code == 0 && orderBResp.Order.Status == "Completed" {
 							orderBAmount,err := strconv.ParseFloat(orderBResp.Order.Total,64)
 							if err != nil {
-								glog.Error(err.Error())
+								glog.V(2).Info(err.Error())
 								return
 							}
 							orderBCommission, err := strconv.ParseFloat(orderAResp.Order.Commission,64)
 							if err != nil {
-								glog.Error(err.Error())
+								glog.V(2).Info(err.Error())
 								return
 							}
 							price = bidEthBtc
@@ -142,16 +142,16 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 							}
 							orderCResp, err := tradeio.Order(orderC)
 							if err != nil {
-								glog.Error(err.Error())
+								glog.V(2).Info(err.Error())
 								return
 							}
-							glog.Info(symbol, " Order C = ", orderCResp)
+							glog.V(2).Info(symbol, " Order C = ", orderCResp)
 
 						}
 					} else {
 						orderAfilled,err := strconv.ParseFloat(orderAResp.Order.UnitsFilled,64)
 						if err != nil {
-							glog.Error(err.Error())
+							glog.V(2).Info(err.Error())
 							return
 						}
 						if orderAResp.Code == 0 && orderAResp.Order.Status == "Working" && orderAfilled <= 0{
@@ -159,7 +159,7 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 							TotalMinuteOrderWeight++
 							_, err := tradeio.CancelOrder(orderAResp.Order.OrderID)
 							if err != nil {
-								glog.Infoln(err.Error())
+								glog.V(2).Infoln(err.Error())
 							}
 						}
 					}

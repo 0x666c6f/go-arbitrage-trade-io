@@ -12,7 +12,6 @@ import (
 )
 
 func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]responses.Symbol, symbol string, intermediate string) {
-	glog.Info("UsdtToBtcEthToUsdt: ",symbol)
 	tickerUSDT := tickers[symbol+"_usdt"]
 	tickerIntermediate := tickers[symbol+"_intermediate"]
 	tickerIntermediateUSDT := tickers[intermediate+"_usdt"]
@@ -55,7 +54,7 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 			askUSDT > 0{
 
 			bonus := bidIntermediateUSDT * bidIntermediate / askUSDT
-
+			glog.Info(symbol, " Bonus = ", bonus)
 
 
 			if bonus > Config.MinProfit {
@@ -97,6 +96,8 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 						return
 					}
 
+					glog.Info(symbol, " Order A = ", orderAResp)
+
 					if orderAResp.Code == 0 && orderAResp.Order.Status == "Completed" {
 						price = bidIntermediate
 						orderAAmount,err := strconv.ParseFloat(orderAResp.Order.BaseAmount,64)
@@ -127,6 +128,7 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 							glog.Error(err.Error())
 							return
 						}
+						glog.Info(symbol, " Order B = ", orderBResp)
 
 						if orderBResp.Code == 0 && orderBResp.Order.Status == "Completed" {
 
@@ -154,11 +156,14 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 								Quantity:  qty,
 								Timestamp: time.Now().Unix() * 1000,
 							}
-							_, err = tradeio.Order(orderC)
+							orderCResp, err := tradeio.Order(orderC)
 							if err != nil {
 								glog.Error(err.Error())
 								return
 							}
+
+							glog.Info(symbol, " Order C = ", orderCResp)
+
 						}
 					} else {
 						orderAfilled,err := strconv.ParseFloat(orderAResp.Order.UnitsFilled,64)

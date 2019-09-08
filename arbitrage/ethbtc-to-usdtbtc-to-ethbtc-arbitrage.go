@@ -12,7 +12,6 @@ import (
 )
 
 func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[string]responses.Symbol, symbol string, source string, intermediate string) {
-	glog.Info("EthBtcToUsdtBtcToEthBtc: ", symbol)
 
 	tickerSource := tickers[symbol+"_"+source]
 	tickerIntermediate := tickers[symbol+"_"+intermediate]
@@ -115,6 +114,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 						glog.Error(err.Error())
 						return
 					}
+					glog.Info(symbol, " Order A = ", orderAResp)
 
 					if orderAResp.Code == 0 && orderAResp.Order.Status == "Completed" {
 
@@ -147,6 +147,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 							glog.Error(err.Error())
 							return
 						}
+						glog.Info(symbol, " Order B = ", orderBResp)
 
 						if orderBResp.Code == 0 && orderBResp.Order.Status == "Completed" {
 
@@ -174,11 +175,13 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 								Quantity:  qty,
 								Timestamp: time.Now().Unix() * 1000,
 							}
-							_, err = tradeio.Order(orderC)
+							orderCResp, err := tradeio.Order(orderC)
 							if err != nil {
 								glog.Error(err.Error())
 								return
 							}
+							glog.Info(symbol, " Order C = ", orderCResp)
+
 						}
 					} else {
 						orderAfilled, err := strconv.ParseFloat(orderAResp.Order.UnitsFilled, 64)

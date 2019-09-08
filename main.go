@@ -9,6 +9,7 @@ import (
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
 	"github.com/golang/glog"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -29,9 +30,24 @@ func main() {
 
 	config,err := utils.LoadConfig("config.yaml")
 	if err != nil {
-		fmt.Errorf(err.Error())
+		glog.Error(err.Error())
 		return
 	}
+
+	startSecond,err := strconv.Atoi(os.Getenv("StartSecond"))
+	if err != nil {
+		glog.Error(err.Error())
+		return
+	}
+	endSecond,err := strconv.Atoi(os.Getenv("StartSecond"))
+	if err != nil {
+		glog.Error(err.Error())
+		return
+	}
+
+	config.StartSecond = startSecond
+	config.EndSecond = endSecond
+	
 	http.Config = config
 	tradeio.Config = config
 	arbitrage.Config = config

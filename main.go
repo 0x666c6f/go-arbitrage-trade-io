@@ -34,20 +34,27 @@ func main() {
 		return
 	}
 
-	startSecond,err := strconv.Atoi(os.Getenv("StartSecond"))
-	if err != nil {
-		glog.Error(err.Error())
-		return
-	}
-	endSecond,err := strconv.Atoi(os.Getenv("StartSecond"))
-	if err != nil {
-		glog.Error(err.Error())
-		return
+	if len(os.Getenv("StartSecond")) > 0{
+		startSecond,err := strconv.Atoi(os.Getenv("StartSecond"))
+		if err != nil {
+			glog.Error(err.Error())
+			return
+		}
+		config.StartSecond = startSecond
+
 	}
 
-	config.StartSecond = startSecond
-	config.EndSecond = endSecond
-	
+	if len(os.Getenv("EndSecond")) > 0 {
+		endSecond,err := strconv.Atoi(os.Getenv("EndSecond"))
+		if err != nil {
+			glog.Error(err.Error())
+			return
+		}
+
+		config.EndSecond = endSecond
+	}
+
+
 	http.Config = config
 	tradeio.Config = config
 	arbitrage.Config = config

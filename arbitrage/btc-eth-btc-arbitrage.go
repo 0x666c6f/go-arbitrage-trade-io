@@ -163,6 +163,8 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 							}
 						}
 					}
+				} else {
+					glog.V(2).Info(symbol, " Quantity is not enough")
 				}
 			}
 		}

@@ -13,7 +13,7 @@ import (
 
 func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]responses.Symbol, symbol string, intermediate string) {
 	tickerUSDT := tickers[symbol+"_usdt"]
-	tickerIntermediate := tickers[symbol+"_intermediate"]
+	tickerIntermediate := tickers[symbol+"_"+intermediate]
 	tickerIntermediateUSDT := tickers[intermediate+"_usdt"]
 
 	if tickerUSDT != (responses.Ticker{}) &&
@@ -49,6 +49,7 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 			glog.V(2).Info(err.Error())
 			return
 		}
+
 		if bidIntermediate > 0 &&
 			bidIntermediateUSDT > 0 &&
 			askUSDT > 0{
@@ -163,7 +164,6 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 							}
 
 							glog.V(2).Info(symbol, " Order C = ", orderCResp)
-
 						}
 					} else {
 						orderAfilled,err := strconv.ParseFloat(orderAResp.Order.UnitsFilled,64)
@@ -180,6 +180,8 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 							}
 						}
 					}
+				} else {
+					glog.V(2).Info(symbol, " Quantity is not enough")
 				}
 			}
 		}

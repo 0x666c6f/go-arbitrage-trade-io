@@ -16,6 +16,10 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 	tickerIntermediate := tickers[symbol+"_"+intermediate]
 	tickerSourceIntermediate := tickers[source+"_"+intermediate]
 
+	var orderAResp responses.OrderResponse
+	var orderBResp responses.OrderResponse
+	var orderCResp responses.OrderResponse
+
 	if tickerSource != (responses.Ticker{}) &&
 		tickerIntermediate != (responses.Ticker{}) &&
 		tickerSourceIntermediate != (responses.Ticker{}) {
@@ -109,7 +113,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 						Quantity:  qty,
 						Timestamp: time.Now().Unix() * 1000,
 					}
-					orderAResp, err := tradeio.Order(orderA)
+					orderAResp, err = tradeio.Order(orderA)
 					if err != nil {
 						glog.V(2).Info(err.Error())
 						return
@@ -142,7 +146,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 							Quantity:  qty,
 							Timestamp: time.Now().Unix() * 1000,
 						}
-						orderBResp, err := tradeio.Order(orderB)
+						orderBResp, err = tradeio.Order(orderB)
 						if err != nil {
 							glog.V(2).Info(err.Error())
 							return
@@ -175,12 +179,14 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 								Quantity:  qty,
 								Timestamp: time.Now().Unix() * 1000,
 							}
-							orderCResp, err := tradeio.Order(orderC)
+							orderCResp, err = tradeio.Order(orderC)
 							if err != nil {
 								glog.V(2).Info(err.Error())
 								return
 							}
 							glog.V(2).Info(symbol, " Order C = ", orderCResp)
+
+							glog.V(2).Info(symbol, "Arbitrage result : <", symbol,">", " bonus = ", bonus )
 
 						}
 					} else {

@@ -96,7 +96,6 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 						glog.V(2).Info(err.Error())
 						return
 					}
-
 					glog.V(2).Info(symbol, " Order A = ", orderAResp)
 
 					if orderAResp.Code == 0 && orderAResp.Order.Status == "Completed" {
@@ -162,8 +161,9 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 								glog.V(2).Info(err.Error())
 								return
 							}
-
 							glog.V(2).Info(symbol, " Order C = ", orderCResp)
+
+							glog.V(2).Info(symbol, "Successful Arbitrage result : <", symbol,">", " bonus = ", bonus )
 						}
 					} else {
 						orderAfilled,err := strconv.ParseFloat(orderAResp.Order.UnitsFilled,64)

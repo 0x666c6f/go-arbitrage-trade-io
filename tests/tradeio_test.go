@@ -135,10 +135,11 @@ func TestBalances(t *testing.T) {
 	tradeio.Config = config
 	balances, err := tradeio.Account();
 	if err != nil {
-		t.Error("Error while getting tickers:",err)
+		t.Error("Error while getting balances:",err)
 	}
+	formattedBalances := utils.FormatBalance(balances.Balances)
 
-	if balances.Code != 0{
-		t.Error("Error while getting tickers, expecting code = 0 but got ",balances.Code)
+	if len(formattedBalances) == 0{
+		t.Error("Error while getting balances, expecting len > 0 but got ",len(formattedBalances))
 	}
 }

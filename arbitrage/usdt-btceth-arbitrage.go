@@ -1,6 +1,7 @@
 package arbitrage
 
 import (
+	"github.com/florianpautot/go-arbitrage-trade-io/model"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
@@ -58,27 +59,27 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 			glog.V(3).Info(symbol, " Bonus = ", bonus)
 
 
-			if bonus > Config.MinProfit {
+			if bonus > model.GlobalConfig.MinProfit {
 
 				var minIntermediate float64
 				var valIntermediate float64
 
 				if intermediate == "eth" {
-					minIntermediate = Config.MinETH
+					minIntermediate = model.GlobalConfig.MinETH
 					valIntermediate = valETH
 				} else {
-					minIntermediate = Config.MinBTC
+					minIntermediate = model.GlobalConfig.MinBTC
 					valIntermediate = valBTC
 				}
 
 				price := askUSDT
 
-				if askUSDT*askUSDTQty > Config.MinUSDT &&
+				if askUSDT*askUSDTQty > model.GlobalConfig.MinUSDT &&
 					bidIntermediate*bidIntermediateQty > minIntermediate &&
-					bidIntermediate*bidIntermediateQty*valIntermediate > Config.MinUSDT &&
-					Config.MaxUSDT/ price >  Config.MinUSDT {
+					bidIntermediate*bidIntermediateQty*valIntermediate > model.GlobalConfig.MinUSDT &&
+					model.GlobalConfig.MaxUSDT/ price >  model.GlobalConfig.MinUSDT {
 
-					mins := []float64{Config.MaxUSDT/ price, askUSDTQty, bidIntermediateQty}
+					mins := []float64{model.GlobalConfig.MaxUSDT/ price, askUSDTQty, bidIntermediateQty}
 					sort.Float64s(mins)
 					qty := utils.RoundUp(utils.RoundDown(mins[0], precUSDT), precIntermediate)
 
@@ -97,7 +98,6 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 						Quantity:  qty,
 						Timestamp: time.Now().Unix() * 1000,
 					}
-					glog.V(2).Info(symbol, " Order A = ", orderA)
 
 					orderAResp, err := tradeio.Order(orderA)
 					if err != nil {
@@ -131,7 +131,6 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 							Quantity:  qty,
 							Timestamp: time.Now().Unix() * 1000,
 						}
-						glog.V(2).Info(symbol, " Order B = ", orderB)
 
 						orderBResp, err := tradeio.Order(orderB)
 						if err != nil {
@@ -147,7 +146,7 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 								glog.V(2).Info(err.Error())
 								return
 							}
-							orderBCommission, err := strconv.ParseFloat(orderAResp.Order.Commission,64)
+							orderBCommission, err := strconv.ParseFloat(orderBResp.Order.Commission,64)
 							if err != nil {
 								glog.V(2).Info(err.Error())
 								return
@@ -166,7 +165,6 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 								Quantity:  qty,
 								Timestamp: time.Now().Unix() * 1000,
 							}
-							glog.V(2).Info(symbol, " Order C = ", orderC)
 
 							orderCResp, err := tradeio.Order(orderC)
 							if err != nil {

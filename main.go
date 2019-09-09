@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/florianpautot/go-arbitrage-trade-io/arbitrage"
-	"github.com/florianpautot/go-arbitrage-trade-io/http"
+	"github.com/florianpautot/go-arbitrage-trade-io/model"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
 	"github.com/golang/glog"
@@ -43,7 +43,6 @@ func main() {
 			return
 		}
 		config.StartSecond = startSecond
-
 	}
 
 	if len(os.Getenv("EndSecond")) > 0 {
@@ -56,6 +55,8 @@ func main() {
 		config.EndSecond = endSecond
 	}
 
+	model.GlobalConfig = config
+
 	balances, err := tradeio.Account()
 	if err != nil {
 		glog.V(1).Info(err.Error())
@@ -63,23 +64,20 @@ func main() {
 
 	if len(balances.Balances) > 0 {
 		formattedBalances := utils.FormatBalance(balances.Balances)
-		config.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
+		model.GlobalConfig.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
 		if err != nil {
 			glog.V(1).Info(err.Error())
 		}
-		config.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
+		model.GlobalConfig.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
 		if err != nil {
 			glog.V(1).Info(err.Error())
 		}
-		config.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
+		model.GlobalConfig.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
 		if err != nil {
 			glog.V(1).Info(err.Error())
 		}
 	}
 
-	http.Config = config
-	tradeio.Config = config
-	arbitrage.Config = config
 
 	infos,err := tradeio.Info()
 	if err != nil {
@@ -89,7 +87,7 @@ func main() {
 	arbitrage.Infos = utils.FormatInfos(infos.Symbols)
 
 
-	startDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+1,config.StartSecond,0,time.Local)
+	startDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+1,model.GlobalConfig.StartSecond,0,time.Local)
 	glog.V(1).Info("Start defined at ",startDate)
 	sleep := startDate.Sub(time.Now())
 	glog.V(1).Info("Starting arbitrages in ",sleep)

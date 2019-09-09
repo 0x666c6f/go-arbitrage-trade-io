@@ -9,11 +9,6 @@ import (
 	"net/http"
 )
 
-
-
-var Config model.Config
-
-
 //HTTPGet :
 func HTTPGet(url string, args string, auth bool) ([]byte, error) {
 
@@ -24,8 +19,8 @@ func HTTPGet(url string, args string, auth bool) ([]byte, error) {
 	req.Header.Add("content-type","application/json")
 
 	if auth {
-		req.Header.Add("Key",Config.APIKey)
-		req.Header.Add("Sign", utils.GenerateSignature(args,Config.APISecret))
+		req.Header.Add("Key",model.GlobalConfig.APIKey)
+		req.Header.Add("Sign", utils.GenerateSignature(args,model.GlobalConfig.APISecret))
 	}
 
 	client := &http.Client{Transport:&http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify : true},}}
@@ -44,8 +39,8 @@ func HTTPPost(url string, data []byte) ([]byte, error){
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	req.Header.Add("content-type","application/json")
 
-	req.Header.Add("Key",Config.APIKey)
-	req.Header.Add("Sign", utils.GenerateSignature(string(data),Config.APISecret))
+	req.Header.Add("Key",model.GlobalConfig.APIKey)
+	req.Header.Add("Sign", utils.GenerateSignature(string(data),model.GlobalConfig.APISecret))
 
 	client := &http.Client{Transport:&http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify : true},}}
 	resp, err := client.Do(req)
@@ -63,8 +58,8 @@ func HTTPPost(url string, data []byte) ([]byte, error){
 func HTTPDelete(url string, args string) ([]byte, error){
 	req, err := http.NewRequest("DELETE", url+args, nil)
 	req.Header.Add("content-type","application/json")
-	req.Header.Add("Key",Config.APIKey)
-	req.Header.Add("Sign", utils.GenerateSignature(args,Config.APISecret))
+	req.Header.Add("Key",model.GlobalConfig.APIKey)
+	req.Header.Add("Sign", utils.GenerateSignature(args,model.GlobalConfig.APISecret))
 
 
 	client := &http.Client{Transport:&http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify : true},}}

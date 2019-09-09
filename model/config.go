@@ -20,3 +20,5 @@ type Config struct {
 	Debug bool `yaml:"Debug"`
 	Exclusions []string `yaml:"Exclusions"`
 }
+
+var GlobalConfig Config

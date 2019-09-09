@@ -1,6 +1,7 @@
 package arbitrage
 
 import (
+	"github.com/florianpautot/go-arbitrage-trade-io/model"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
@@ -61,13 +62,13 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 
 			price := askBtc
 
-			if bonus > Config.MinProfit {
-				if askBtc*askBtcQty > Config.MinBTC &&
-					bidEth*bidEthQty > Config.MinETH &&
-					bidEth*bidEthQty*valEthBTC > Config.MinBTC &&
-					Config.MaxBTC / price > Config.MinBTC {
+			if bonus > model.GlobalConfig.MinProfit {
+				if askBtc*askBtcQty > model.GlobalConfig.MinBTC &&
+					bidEth*bidEthQty > model.GlobalConfig.MinETH &&
+					bidEth*bidEthQty*valEthBTC > model.GlobalConfig.MinBTC &&
+					model.GlobalConfig.MaxBTC / price > model.GlobalConfig.MinBTC {
 
-					mins := []float64{Config.MaxBTC / price, askBtcQty, bidEthQty}
+					mins := []float64{model.GlobalConfig.MaxBTC / price, askBtcQty, bidEthQty}
 					sort.Float64s(mins)
 					qty := utils.RoundUp(utils.RoundDown(mins[0], precBTC), precETH)
 
@@ -86,7 +87,6 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 						Quantity:  qty,
 						Timestamp: time.Now().Unix() * 1000,
 					}
-					glog.V(2).Info(symbol, " Order A = ", orderA)
 
 					orderAResp, err = tradeio.Order(orderA)
 					if err != nil {
@@ -121,8 +121,6 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 							Timestamp: time.Now().Unix() * 1000,
 						}
 
-						glog.V(2).Info(symbol, " Order B = ", orderB)
-
 						orderBResp, err = tradeio.Order(orderB)
 						if err != nil {
 							glog.V(2).Info(err.Error())
@@ -136,7 +134,7 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 								glog.V(2).Info(err.Error())
 								return
 							}
-							orderBCommission, err := strconv.ParseFloat(orderAResp.Order.Commission,64)
+							orderBCommission, err := strconv.ParseFloat(orderBResp.Order.Commission,64)
 							if err != nil {
 								glog.V(2).Info(err.Error())
 								return
@@ -155,8 +153,6 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 								Quantity:  qty,
 								Timestamp: time.Now().Unix() * 1000,
 							}
-
-							glog.V(2).Info(symbol, " Order C = ", orderC)
 
 							orderCResp, err = tradeio.Order(orderC)
 							if err != nil {

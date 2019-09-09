@@ -12,15 +12,13 @@ import (
 	"time"
 )
 
-var Config model.Config
 
 //Info :
 func  Info() (responses.Infos, error){
 	var infos responses.Infos
 	var errorResponse errors2.ErrorResponse
 
-	http.Config = Config
-	res, err := http.HTTPGet(Config.APIEndpoint+"/api/v1/info","",false)
+	res, err := http.HTTPGet(model.GlobalConfig.APIEndpoint+"/api/v1/info","",false)
 	if err != nil {
 		return responses.Infos{}, err
 	}
@@ -49,8 +47,7 @@ func Tickers() (responses.Tickers, error){
 	var tickers responses.Tickers
 	var errorResponse errors2.ErrorResponse
 
-	http.Config = Config
-	res, err := http.HTTPGet(Config.APIEndpoint+"/api/v1/tickers","",false)
+	res, err := http.HTTPGet(model.GlobalConfig.APIEndpoint+"/api/v1/tickers","",false)
 	if err != nil {
 		return responses.Tickers{}, err
 	}
@@ -77,10 +74,9 @@ func Tickers() (responses.Tickers, error){
 //Order :
 func Order(order requests.Order) (responses.OrderResponse, error){
 	var orderResponse responses.OrderResponse
-	var errorResponse errors2.ErrorResponse
-	http.Config = Config
+	var errorResponse errors2.OrderErrorResponse
 	marshOrder, err := json.Marshal(order)
-	res, err := http.HTTPPost(Config.APIEndpoint+"/api/v1/order",marshOrder)
+	res, err := http.HTTPPost(model.GlobalConfig.APIEndpoint+"/api/v1/order",marshOrder)
 	if err != nil {
 		return responses.OrderResponse{}, err
 	}
@@ -90,8 +86,8 @@ func Order(order requests.Order) (responses.OrderResponse, error){
 		return responses.OrderResponse{}, err
 	}
 
-	if len(errorResponse.Error) > 0 {
-		return responses.OrderResponse{}, errors.New(errorResponse.Error)
+	if len(errorResponse.Errors) > 0 {
+		return responses.OrderResponse{}, errors.New(errorResponse.Errors[0].Message)
 	}
 
 	err = json.Unmarshal(res, &orderResponse)
@@ -107,9 +103,7 @@ func CancelOrder(orderID string) (responses.CancelResponse,error){
 	var cancelResp responses.CancelResponse
 	var errorResponse errors2.ErrorResponse
 
-	http.Config = Config
-
-	res, err := http.HTTPDelete(Config.APIEndpoint+"/api/v1/order/"+orderID,"?ts="+strconv.FormatInt(time.Now().Unix()*1000,10))
+	res, err := http.HTTPDelete(model.GlobalConfig.APIEndpoint+"/api/v1/order/"+orderID,"?ts="+strconv.FormatInt(time.Now().Unix()*1000,10))
 	if err != nil {
 		return responses.CancelResponse{}, err
 	}
@@ -143,8 +137,7 @@ func Account() (responses.Balances, error){
 	var errorResponse errors2.ErrorResponse
 
 
-	http.Config = Config
-	res, err := http.HTTPGet(Config.APIEndpoint+"/api/v1/account","?ts="+strconv.FormatInt(time.Now().Unix()*1000,10),true)
+	res, err := http.HTTPGet(model.GlobalConfig.APIEndpoint+"/api/v1/account","?ts="+strconv.FormatInt(time.Now().Unix()*1000,10),true)
 	if err != nil {
 		return responses.Balances{}, err
 	}

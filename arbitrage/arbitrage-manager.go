@@ -10,7 +10,6 @@ import (
 	"time"
 )
 
-var Config model.Config
 var Infos map[string]responses.Symbol
 var TotalMinuteWeight = 0
 var TotalMinuteOrderWeight = 0
@@ -20,13 +19,13 @@ var valETH float64
 var valEthBTC float64
 
 func Start(){
-	restartDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+1,Config.StartSecond,0,time.Local)
+	restartDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+1,model.GlobalConfig.StartSecond,0,time.Local)
 	glog.V(1).Info("Starting arbitrage")
 
-	for TotalMinuteWeight < (Config.APIMinuteLimit - 23) && Config.EndSecond > time.Now().Second() {
+	for TotalMinuteWeight < (model.GlobalConfig.APIMinuteLimit - 23) && model.GlobalConfig.EndSecond > time.Now().Second() {
 		launchArbitrages()
-		if Config.Timeout != ""{
-			duration,err:= time.ParseDuration(Config.Timeout)
+		if model.GlobalConfig.Timeout != ""{
+			duration,err:= time.ParseDuration(model.GlobalConfig.Timeout)
 			if err != nil {
 				glog.V(1).Info(err.Error())
 			}
@@ -41,15 +40,15 @@ func Start(){
 
 	if len(balances.Balances) > 0 {
 		formattedBalances := utils.FormatBalance(balances.Balances)
-		Config.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
+		model.GlobalConfig.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
 		if err != nil {
 			glog.V(1).Info(err.Error())
 		}
-		Config.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
+		model.GlobalConfig.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
 		if err != nil {
 			glog.V(1).Info(err.Error())
 		}
-		Config.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
+		model.GlobalConfig.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
 		if err != nil {
 			glog.V(1).Info(err.Error())
 		}
@@ -59,7 +58,7 @@ func Start(){
 	TotalMinuteOrderWeight = 0;
 	if time.Now().Before(restartDate) {
 		sleepTime := restartDate.Sub(time.Now())
-		glog.V(1).Info("Will sleep", sleepTime.Seconds(), "to reset minute weight");
+		glog.V(1).Info("Will sleep ", sleepTime.Seconds(), "to reset minute weight");
 		time.Sleep(sleepTime)
 		glog.V(1).Info("Waking up, sleep is over !");
 	}
@@ -68,14 +67,12 @@ func Start(){
 
 func launchArbitrages(){
 	tickers,err := tradeio.Tickers()
+	TotalMinuteWeight +=20
 	if err != nil{
 		glog.V(1).Info(err.Error())
-	}
-	TotalMinuteWeight +=20
-	if tickers.Code != 0 {
 		glog.V(1).Info("Error while retrieving tickers, will sleep until next loop")
-		wakeUp := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute(),Config.StartSecond+1,0,time.Local)
-		glog.V(1).Info("Will sleep",wakeUp)
+		wakeUp := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+2,model.GlobalConfig.StartSecond,0,time.Local)
+		glog.V(1).Info("Will sleep ",wakeUp.Sub(time.Now()))
 		time.Sleep(wakeUp.Sub(time.Now()))
 		glog.V(1).Info("Waking up, back to work !")
 		return

@@ -67,7 +67,6 @@ func Start(){
 }
 
 func launchArbitrages(){
-	glog.V(1).Info("Launching arbitrages")
 	tickers,err := tradeio.Tickers()
 	if err != nil{
 		glog.V(1).Info(err.Error())

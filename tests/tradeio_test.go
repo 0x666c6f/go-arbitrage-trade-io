@@ -57,13 +57,38 @@ func TestOrder(t *testing.T) {
 		Timestamp:time.Now().Unix()*1000,
 	}
 
-	infos, err := tradeio.Order(order);
+	orderResp, err := tradeio.Order(order);
 	if err != nil {
 		t.Error("Error while creating order:",err)
 	}
 
-	if infos.Code != 0{
-		t.Error("Error while creating order, expecting code = 0 but got ",infos.Code)
+	if orderResp.Code != 0{
+		t.Error("Error while creating order, expecting code = 0 but got ",orderResp.Code)
+	}
+}
+
+func TestFailedOrder(t *testing.T) {
+	config, err := utils.LoadConfig("../config.yaml")
+	if err != nil {
+		t.Error("Error while getting config:",err)
+	}
+	tradeio.Config = config
+
+	order := requests.Order{
+		Symbol:    "eth_btc",
+		Side:      "sell",
+		Type:      "",
+		Price:     99999999999,
+		Quantity:  0.0,
+		Timestamp:time.Now().Unix()*1000,
+	}
+
+	_, err = tradeio.Order(order);
+	if err != nil {
+		t.Error("Error while creating order:",err)
+	}  else {
+		t.Error("Exptected an error but got empty error")
+		t.Fail()
 	}
 }
 

@@ -53,7 +53,7 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 			askBtc > 0 &&
 			bidEth > 0{
 			bonus := bidEth * bidEthBtc / askBtc
-			glog.V(2).Info(symbol, " Bonus = ", bonus)
+			glog.V(3).Info(symbol, " Bonus = ", bonus)
 
 			if bonus > Config.MinProfit {
 				if askBtc*askBtcQty > Config.MinBTC &&

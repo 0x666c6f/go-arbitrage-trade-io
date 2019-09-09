@@ -55,7 +55,7 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 			askUSDT > 0{
 
 			bonus := bidIntermediateUSDT * bidIntermediate / askUSDT
-			glog.V(2).Info(symbol, " Bonus = ", bonus)
+			glog.V(3).Info(symbol, " Bonus = ", bonus)
 
 
 			if bonus > Config.MinProfit {

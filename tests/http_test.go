@@ -41,7 +41,7 @@ func TestHTTPPostSecured(t *testing.T) {
 	order := requests.Order{
 		Symbol:    "eth_btc",
 		Side:      "sell",
-		Type:      "limit",
+		Type:      "",
 		Price:     99999999999,
 		Quantity:  0.01,
 		Timestamp: time.Now().Unix()*1000,

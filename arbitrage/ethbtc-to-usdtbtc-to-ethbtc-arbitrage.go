@@ -54,7 +54,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 			askSource > 0 {
 
 			bonus := bidIntermediate / askSource / askSourceIntermediate
-			glog.V(2).Info(symbol, " Bonus = ", bonus)
+			glog.V(3).Info(symbol, " Bonus = ", bonus)
 
 			if bonus > Config.MinProfit {
 				var minIntermediate float64
@@ -199,7 +199,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 						}
 					}
 				} else {
-					glog.V(2).Info(symbol, " Quantity is not enough")
+					glog.V(3).Info(symbol, " Quantity is not enough")
 				}
 			}
 		}

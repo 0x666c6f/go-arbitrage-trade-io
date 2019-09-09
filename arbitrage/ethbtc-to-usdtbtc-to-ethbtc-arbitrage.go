@@ -140,7 +140,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 
 						orderB := requests.Order{
 							Symbol:    source + "_" + intermediate,
-							Side:      "buy",
+							Side:      "sell",
 							Type:      "limit",
 							Price:     price,
 							Quantity:  qty,

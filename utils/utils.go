@@ -59,15 +59,17 @@ func FormatInfos(infos []responses.Symbol) map[string]responses.Symbol {
 
 func FormatTickers(tickers []responses.Ticker) (map[string]responses.Ticker, []string) {
 	formattedTickers := make(map[string]responses.Ticker)
-	existingTickers := make(map[string]bool)
+	existingAssets := make(map[string]bool)
 
 	var symbols []string
 	for _,ticker := range tickers {
 		asset := strings.Split(ticker.Symbol,"_")[0]
-		if !strings.Contains(model.GlobalConfig.Exclusions,asset) && existingTickers[asset] == false{
+		if !strings.Contains(model.GlobalConfig.Exclusions,asset) {
 			formattedTickers[ticker.Symbol] = ticker
-			symbols = append(symbols, asset)
-			existingTickers[asset] = true
+			if existingAssets[asset] == false {
+				symbols = append(symbols, asset)
+				existingAssets[asset] = true
+			}
 		}
 
 	}

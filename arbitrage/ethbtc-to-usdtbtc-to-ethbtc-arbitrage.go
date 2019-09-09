@@ -92,15 +92,20 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 					valSourceIntermediate = valEthBTC;
 				}
 
+				price := askSource
 
 				if bidIntermediate*bidIntermediateQty > minIntermediate &&
 					askSource * askSourceQty > minSource &&
-					askSource *askSourceQty * valSourceIntermediate > minIntermediate {
+					askSource *askSourceQty * valSourceIntermediate > minIntermediate &&
+					maxSource/price > minSource {
 
-					price := askSource
 					mins := []float64{maxSource / price, askSourceQty, bidIntermediateQty}
 					sort.Float64s(mins)
 					qty := utils.RoundUp(utils.RoundDown(mins[0], precSource), precIntermediate)
+
+					if(qty == 0){
+						return
+					}
 
 					TotalMinuteWeight++
 					TotalMinuteOrderWeight++
@@ -141,7 +146,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 						TotalMinuteOrderWeight++
 
 						orderB := requests.Order{
-							Symbol:    source + "_" + intermediate,
+							Symbol:    symbol + "_" + intermediate,
 							Side:      "sell",
 							Type:      "limit",
 							Price:     price,
@@ -176,7 +181,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 							TotalMinuteOrderWeight++
 
 							orderC := requests.Order{
-								Symbol:    intermediate + "_usdt",
+								Symbol:    source + "_"+intermediate,
 								Side:      "sell",
 								Type:      "limit",
 								Price:     price,

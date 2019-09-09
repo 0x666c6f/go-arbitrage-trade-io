@@ -71,14 +71,20 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 					valIntermediate = valBTC
 				}
 
+				price := askUSDT
+
 				if askUSDT*askUSDTQty > Config.MinUSDT &&
 					bidIntermediate*bidIntermediateQty > minIntermediate &&
-					bidIntermediate*bidIntermediateQty*valIntermediate > Config.MinUSDT {
+					bidIntermediate*bidIntermediateQty*valIntermediate > Config.MinUSDT &&
+					Config.MaxUSDT/ price >  Config.MinUSDT {
 
-					price := askUSDT
 					mins := []float64{Config.MaxUSDT/ price, askUSDTQty, bidIntermediateQty}
 					sort.Float64s(mins)
 					qty := utils.RoundUp(utils.RoundDown(mins[0], precUSDT), precIntermediate)
+
+					if(qty == 0){
+						return
+					}
 
 					TotalMinuteWeight++
 					TotalMinuteOrderWeight++

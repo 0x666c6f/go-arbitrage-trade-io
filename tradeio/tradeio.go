@@ -7,6 +7,7 @@ import (
 	"github.com/florianpautot/go-arbitrage-trade-io/model"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
+	errors2 "github.com/florianpautot/go-arbitrage-trade-io/model/responses/errors"
 	"strconv"
 	"time"
 )
@@ -16,7 +17,7 @@ var Config model.Config
 //Info :
 func  Info() (responses.Infos, error){
 	var infos responses.Infos
-	var errorResponse responses.ErrorResponse
+	var errorResponse errors2.ErrorResponse
 
 	http.Config = Config
 	res, err := http.HTTPGet(Config.APIEndpoint+"/api/v1/info","",false)
@@ -46,7 +47,7 @@ func  Info() (responses.Infos, error){
 //Tickers :
 func Tickers() (responses.Tickers, error){
 	var tickers responses.Tickers
-	var errorResponse responses.ErrorResponse
+	var errorResponse errors2.ErrorResponse
 
 	http.Config = Config
 	res, err := http.HTTPGet(Config.APIEndpoint+"/api/v1/tickers","",false)
@@ -76,7 +77,7 @@ func Tickers() (responses.Tickers, error){
 //Order :
 func Order(order requests.Order) (responses.OrderResponse, error){
 	var orderResponse responses.OrderResponse
-	var errorResponse responses.ErrorResponse
+	var errorResponse errors2.ErrorResponse
 	http.Config = Config
 	marshOrder, err := json.Marshal(order)
 	res, err := http.HTTPPost(Config.APIEndpoint+"/api/v1/order",marshOrder)
@@ -104,7 +105,7 @@ func Order(order requests.Order) (responses.OrderResponse, error){
 //DeleteOrder :
 func CancelOrder(orderID string) (responses.CancelResponse,error){
 	var cancelResp responses.CancelResponse
-	var errorResponse responses.ErrorResponse
+	var errorResponse errors2.ErrorResponse
 
 	http.Config = Config
 
@@ -139,7 +140,7 @@ func ClosedOrders(symbol string, start int, end int, page int, perPage int) {
 //Account :
 func Account() (responses.Balances, error){
 	var balances responses.Balances
-	var errorResponse responses.ErrorResponse
+	var errorResponse errors2.ErrorResponse
 
 
 	http.Config = Config

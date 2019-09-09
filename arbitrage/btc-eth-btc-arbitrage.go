@@ -59,15 +59,21 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 			bonus := bidEth * bidEthBtc / askBtc
 			glog.V(3).Info(symbol, " Bonus = ", bonus)
 
+			price := askBtc
+
 			if bonus > Config.MinProfit {
 				if askBtc*askBtcQty > Config.MinBTC &&
 					bidEth*bidEthQty > Config.MinETH &&
-					bidEth*bidEthQty*valEthBTC > Config.MinBTC {
+					bidEth*bidEthQty*valEthBTC > Config.MinBTC &&
+					Config.MaxBTC / price > Config.MinBTC {
 
-					price := askBtc
 					mins := []float64{Config.MaxBTC / price, askBtcQty, bidEthQty}
 					sort.Float64s(mins)
 					qty := utils.RoundUp(utils.RoundDown(mins[0], precBTC), precETH)
+
+					if(qty == 0){
+						return
+					}
 
 					TotalMinuteWeight++
 					TotalMinuteOrderWeight++

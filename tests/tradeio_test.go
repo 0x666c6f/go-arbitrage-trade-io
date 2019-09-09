@@ -2,6 +2,7 @@ package gocryptobot_tests
 
 import (
 	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
+	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
 	"github.com/florianpautot/go-arbitrage-trade-io/utils"
 	"testing"
@@ -77,16 +78,16 @@ func TestFailedOrder(t *testing.T) {
 	order := requests.Order{
 		Symbol:    "eth_btc",
 		Side:      "sell",
-		Type:      "",
+		Type:      "limit",
 		Price:     99999999999,
-		Quantity:  0.0,
+		Quantity:  99999999999,
 		Timestamp:time.Now().Unix()*1000,
 	}
 
-	_, err = tradeio.Order(order);
+	orderResp, err := tradeio.Order(order);
 	if err != nil {
 		t.Error("Error while creating order:",err)
-	}  else {
+	}  else if orderResp != (responses.OrderResponse{}){
 		t.Error("Exptected an error but got empty error")
 		t.Fail()
 	}

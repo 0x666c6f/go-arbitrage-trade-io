@@ -56,6 +56,26 @@ func main() {
 		config.EndSecond = endSecond
 	}
 
+	balances, err := tradeio.Account()
+	if err != nil {
+		glog.V(1).Info(err.Error())
+	}
+
+	if len(balances.Balances) > 0 {
+		formattedBalances := utils.FormatBalance(balances.Balances)
+		config.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
+		if err != nil {
+			glog.V(1).Info(err.Error())
+		}
+		config.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
+		if err != nil {
+			glog.V(1).Info(err.Error())
+		}
+		config.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
+		if err != nil {
+			glog.V(1).Info(err.Error())
+		}
+	}
 
 	http.Config = config
 	tradeio.Config = config
@@ -67,6 +87,7 @@ func main() {
 		return
 	}
 	arbitrage.Infos = utils.FormatInfos(infos.Symbols)
+
 
 	startDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+1,config.StartSecond,0,time.Local)
 	glog.V(1).Info("Start defined at ",startDate)

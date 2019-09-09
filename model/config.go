@@ -18,7 +18,7 @@ type Config struct {
 	StartSecond int `yaml:"StartSecond"`
 	EndSecond int `yaml:"EndSecond"`
 	Debug bool `yaml:"Debug"`
-	Exclusions []string `yaml:"Exclusions"`
+	Exclusions string `yaml:"Exclusions"`
 }
 
 var GlobalConfig Config

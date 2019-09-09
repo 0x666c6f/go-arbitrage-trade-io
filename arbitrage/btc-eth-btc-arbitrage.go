@@ -68,7 +68,7 @@ func BtcEthBtcArbitrage(tickers map[string]responses.Ticker, infos map[string]re
 					bidEth*bidEthQty*valEthBTC > model.GlobalConfig.MinBTC &&
 					model.GlobalConfig.MaxBTC / price > model.GlobalConfig.MinBTC {
 
-					mins := []float64{model.GlobalConfig.MaxBTC / price, askBtcQty, bidEthQty}
+					mins := []float64{utils.RoundDown(model.GlobalConfig.MaxBTC / price, precBTC), askBtcQty, bidEthQty}
 					sort.Float64s(mins)
 					qty := utils.RoundUp(utils.RoundDown(mins[0], precBTC), precETH)
 

@@ -5,36 +5,7 @@ APIMinuteLimit: 970
 APISecret: 100ad32f-5e7b-4a37-8c7f-e1199d1943db
 Debug: false
 EndSecond: 5
-Exclusions:
-  - ktos
-  - btnt
-  - ttv
-  - dog
-  - kick
-  - xfrc
-  - usdt
-  - xrr
-  - ttv
-  - lamb
-  - lto
-  - edr
-  - pco
-  - hot
-  - mco
-  - ode
-  - nexo
-  - mana
-  - xsg
-  - tusd
-  - sidt
-  - aoa
-  - solve
-  - wpp
-  - loom
-  - bch
-  - coy
-  - link
-  - zil
+Exclusions: ktos,btnt,ttv,dog,kick,xfrc,usdt,xrr,ttv,lamb,lto,edr,pco,hot,mco,ode,nexo,mana,xsg,sidt,aoa,solve,wpp,loom,coy,link
 Fees: 1.001
 MaxBTC: 0.00179364
 MaxETH: 0.07138272

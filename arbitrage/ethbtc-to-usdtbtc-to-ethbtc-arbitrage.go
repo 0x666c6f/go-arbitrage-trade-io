@@ -100,7 +100,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 					askSource *askSourceQty * valSourceIntermediate > minIntermediate &&
 					maxSource/price > minSource {
 
-					mins := []float64{maxSource / price, askSourceQty, bidIntermediateQty}
+					mins := []float64{utils.RoundDown(maxSource / price, precSource), askSourceQty, bidIntermediateQty}
 					sort.Float64s(mins)
 					qty := utils.RoundUp(utils.RoundDown(mins[0], precSource), precIntermediate)
 

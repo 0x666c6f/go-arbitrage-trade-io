@@ -79,7 +79,7 @@ func UsdtToBtcEthToUsdt(tickers map[string]responses.Ticker, infos map[string]re
 					bidIntermediate*bidIntermediateQty*valIntermediate > model.GlobalConfig.MinUSDT &&
 					model.GlobalConfig.MaxUSDT/ price >  model.GlobalConfig.MinUSDT {
 
-					mins := []float64{model.GlobalConfig.MaxUSDT/ price, askUSDTQty, bidIntermediateQty}
+					mins := []float64{utils.RoundDown(model.GlobalConfig.MaxUSDT/ price, precUSDT), askUSDTQty, bidIntermediateQty}
 					sort.Float64s(mins)
 					qty := utils.RoundUp(utils.RoundDown(mins[0], precUSDT), precIntermediate)
 

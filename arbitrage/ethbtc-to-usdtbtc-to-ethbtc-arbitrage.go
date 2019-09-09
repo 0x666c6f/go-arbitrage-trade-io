@@ -113,12 +113,14 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 						Quantity:  qty,
 						Timestamp: time.Now().Unix() * 1000,
 					}
+					glog.V(2).Info(symbol, " Order A = ", orderA)
+
 					orderAResp, err = tradeio.Order(orderA)
 					if err != nil {
 						glog.V(2).Info(err.Error())
 						return
 					}
-					glog.V(2).Info(symbol, " Order A = ", orderAResp)
+					glog.V(2).Info(symbol, " Order A Resp = ", orderAResp)
 
 					if orderAResp.Code == 0 && orderAResp.Order.Status == "Completed" {
 
@@ -146,6 +148,8 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 							Quantity:  qty,
 							Timestamp: time.Now().Unix() * 1000,
 						}
+						glog.V(2).Info(symbol, " Order B = ", orderB)
+
 						orderBResp, err = tradeio.Order(orderB)
 						if err != nil {
 							glog.V(2).Info(err.Error())
@@ -179,6 +183,9 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 								Quantity:  qty,
 								Timestamp: time.Now().Unix() * 1000,
 							}
+
+							glog.V(2).Info(symbol, " Order C = ", orderC)
+
 							orderCResp, err = tradeio.Order(orderC)
 							if err != nil {
 								glog.V(2).Info(err.Error())
@@ -186,21 +193,23 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 							}
 							glog.V(2).Info(symbol, " Order C = ", orderCResp)
 
-							glog.V(2).Info(symbol, "Arbitrage result : <", symbol,">", " bonus = ", bonus )
+							glog.V(1).Info("Arbitrage result : <", symbol,">", " bonus = ", bonus )
 
 						}
 					} else {
-						orderAfilled, err := strconv.ParseFloat(orderAResp.Order.UnitsFilled, 64)
-						if err != nil {
-							glog.V(2).Info(err.Error())
-							return
-						}
-						if orderAResp.Code == 0 && orderAResp.Order.Status == "Working" && orderAfilled <= 0 {
-							TotalMinuteWeight++
-							TotalMinuteOrderWeight++
-							_, err := tradeio.CancelOrder(orderAResp.Order.OrderID)
+						if orderAResp.Order.UnitsFilled != ""{
+							orderAfilled, err := strconv.ParseFloat(orderAResp.Order.UnitsFilled, 64)
 							if err != nil {
-								glog.V(2).Infoln(err.Error())
+								glog.V(2).Info(err.Error())
+								return
+							}
+							if orderAResp.Code == 0 && orderAResp.Order.Status == "Working" && orderAfilled <= 0 {
+								TotalMinuteWeight++
+								TotalMinuteOrderWeight++
+								_, err := tradeio.CancelOrder(orderAResp.Order.OrderID)
+								if err != nil {
+									glog.V(2).Infoln(err.Error())
+								}
 							}
 						}
 					}

@@ -1,7 +1,6 @@
-package async
+package arbitrage
 
 import (
-	"github.com/florianpautot/go-arbitrage-trade-io/arbitrage"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/golang/glog"
 )
@@ -32,13 +31,13 @@ func Workers(symbol string, formattedTickers map[string]responses.Ticker, infos 
 	// btc->XXX->eth->btc
 	go func() {
 		glog.V(3).Info("async usdt->XXX->btc->usdt")
-		arbitrage.UsdtToBtcEthToUsdt(formattedTickers,infos,symbol,"btc")
+		UsdtToBtcEthToUsdt(formattedTickers,infos,symbol,"btc")
 
 		phase1Chan <- true
 	}()
 	go func() {
 		glog.V(3).Info("async btc->XXX->eth->btc")
-		arbitrage.BtcEthBtcArbitrage(formattedTickers,infos,symbol)
+		BtcEthBtcArbitrage(formattedTickers,infos,symbol)
 		phase1Chan <- true
 	}()
 	for i := 0; i < 2; i++{
@@ -53,12 +52,12 @@ func Workers(symbol string, formattedTickers map[string]responses.Ticker, infos 
 
 	go func() {
 		glog.V(3).Info("async eth->XXX->btc->eth")
-		arbitrage.EthBtcToUsdtBtcToEthBtc(formattedTickers,infos,symbol,"eth","btc")
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,infos,symbol,"eth","btc")
 		phase2Chan <- true
 	}()
 	go func() {
 		glog.V(3).Info("async btc->XXX->usdt->btc")
-		arbitrage.EthBtcToUsdtBtcToEthBtc(formattedTickers,infos,symbol,"btc","usdt")
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,infos,symbol,"btc","usdt")
 		phase2Chan <- true
 	}()
 	for i := 0; i < 2; i++{
@@ -73,13 +72,13 @@ func Workers(symbol string, formattedTickers map[string]responses.Ticker, infos 
 
 	go func() {
 		glog.V(3).Info("async eth->XXX->usdt->eth")
-		arbitrage.EthBtcToUsdtBtcToEthBtc(formattedTickers,infos,symbol,"eth","usdt")
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,infos,symbol,"eth","usdt")
 
 		phase3Chan <- true
 	}()
 	go func() {
 		glog.V(3).Info("async usdt->xxx->eth->usdt")
-		arbitrage.UsdtToBtcEthToUsdt(formattedTickers,infos,symbol,"eth")
+		UsdtToBtcEthToUsdt(formattedTickers,infos,symbol,"eth")
 		phase3Chan <- true
 	}()
 	for i := 0; i < 2; i++{

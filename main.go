@@ -58,7 +58,7 @@ func main() {
 	model.GlobalConfig = config
 
 	tradeio.UpdateCachedBalances()
-	
+
 	infos,err := tradeio.Info()
 	if err != nil {
 		glog.V(1).Info(err.Error())

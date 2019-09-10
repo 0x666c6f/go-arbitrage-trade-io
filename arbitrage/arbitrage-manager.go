@@ -1,7 +1,6 @@
 package arbitrage
 
 import (
-	"github.com/florianpautot/go-arbitrage-trade-io/async"
 	"github.com/florianpautot/go-arbitrage-trade-io/model"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
@@ -77,14 +76,18 @@ func launchArbitrages(){
 
 	for index := 0; index < len(symbols); index++ {
 		symbol := symbols[index]
-		exit := make(chan bool)
-		async.Workers(symbol,formattedTickers,Infos,func() {
-			exit <- true
-		})
-		glog.Info("Finished !")
-		<-exit
-		close(exit)
-		glog.Info("Ended")
+		//exit := make(chan bool)
+		//Workers(symbol,formattedTickers,Infos,func() {
+		//	exit <- true
+		//})
+		//<-exit
+		//close(exit)
+		UsdtToBtcEthToUsdt(formattedTickers,Infos,symbol,"btc")
+		BtcEthBtcArbitrage(formattedTickers,Infos,symbol)
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"eth","btc")
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"btc","usdt")
+		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"eth","usdt")
+		UsdtToBtcEthToUsdt(formattedTickers,Infos,symbol,"eth")
 	}
 
 }

@@ -127,7 +127,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 						glog.V(2).Info(err.Error())
 						return
 					}
-					glog.V(2).Info(symbol, " Order A Resp = ", orderAResp)
+					glog.V(3).Info(symbol, " Order A Resp = ", orderAResp)
 
 					if orderAResp.Code == 0 && orderAResp.Order.Status == "Completed" {
 
@@ -161,7 +161,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 							glog.V(2).Info(err.Error())
 							return
 						}
-						glog.V(2).Info(symbol, " Order B = ", orderBResp)
+						glog.V(3).Info(symbol, " Order B = ", orderBResp)
 
 						if orderBResp.Code == 0 && orderBResp.Order.Status == "Completed" {
 
@@ -195,7 +195,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 								glog.V(2).Info(err.Error())
 								return
 							}
-							glog.V(2).Info(symbol, " Order C = ", orderCResp)
+							glog.V(3).Info(symbol, " Order C = ", orderCResp)
 
 							glog.V(1).Info("Arbitrage result : <", symbol,">", " bonus = ", bonus )
 

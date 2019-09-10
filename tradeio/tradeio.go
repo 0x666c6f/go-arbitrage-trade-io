@@ -8,6 +8,8 @@ import (
 	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	errors2 "github.com/florianpautot/go-arbitrage-trade-io/model/responses/errors"
+	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"github.com/golang/glog"
 	"strconv"
 	"time"
 )
@@ -160,3 +162,25 @@ func Account() (responses.Balances, error){
 	return balances, nil
 }
 
+func UpdateCachedBalances() {
+	balances, err := Account()
+	if err != nil {
+		glog.V(1).Info(err.Error())
+	}
+
+	if len(balances.Balances) > 0 {
+		formattedBalances := utils.FormatBalance(balances.Balances)
+		model.GlobalConfig.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
+		if err != nil {
+			glog.V(1).Info(err.Error())
+		}
+		model.GlobalConfig.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
+		if err != nil {
+			glog.V(1).Info(err.Error())
+		}
+		model.GlobalConfig.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
+		if err != nil {
+			glog.V(1).Info(err.Error())
+		}
+	}
+}

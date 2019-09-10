@@ -94,3 +94,4 @@ func main() {
 	time.Sleep(startDate.Sub(time.Now()))
 	arbitrage.Start()
 }
+

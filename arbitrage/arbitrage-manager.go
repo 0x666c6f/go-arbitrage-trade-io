@@ -1,6 +1,7 @@
 package arbitrage
 
 import (
+	"github.com/florianpautot/go-arbitrage-trade-io/async"
 	"github.com/florianpautot/go-arbitrage-trade-io/model"
 	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
 	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
@@ -19,6 +20,7 @@ var valETH float64
 var valEthBTC float64
 
 func Start(){
+	tradeio.UpdateCachedBalances()
 	restartDate := time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),time.Now().Hour(),time.Now().Minute()+1,model.GlobalConfig.StartSecond,0,time.Local)
 	glog.V(1).Info("Starting arbitrage")
 
@@ -33,26 +35,7 @@ func Start(){
 		}
 	}
 
-	balances, err := tradeio.Account()
-	if err != nil {
-		glog.V(1).Info(err.Error())
-	}
-
-	if len(balances.Balances) > 0 {
-		formattedBalances := utils.FormatBalance(balances.Balances)
-		model.GlobalConfig.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
-		if err != nil {
-			glog.V(1).Info(err.Error())
-		}
-		model.GlobalConfig.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
-		if err != nil {
-			glog.V(1).Info(err.Error())
-		}
-		model.GlobalConfig.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
-		if err != nil {
-			glog.V(1).Info(err.Error())
-		}
-	}
+	tradeio.UpdateCachedBalances()
 
 	TotalMinuteWeight = 0;
 	TotalMinuteOrderWeight = 0;
@@ -94,12 +77,13 @@ func launchArbitrages(){
 
 	for index := 0; index < len(symbols); index++ {
 		symbol := symbols[index]
-		BtcEthBtcArbitrage(formattedTickers,Infos,symbol)
-		UsdtToBtcEthToUsdt(formattedTickers,Infos,symbol,"eth")
-		UsdtToBtcEthToUsdt(formattedTickers,Infos,symbol,"btc")
-		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"eth","btc")
-		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"btc","usdt")
-		EthBtcToUsdtBtcToEthBtc(formattedTickers,Infos,symbol,"eth","usdt")
+		exit := make(chan bool)
+		async.Workers(symbol,formattedTickers,Infos,func() {
+			exit <- true
+		})
+		glog.Info("Finished !")
+		<-exit
+		glog.Info("Ended")
 	}
 
 }

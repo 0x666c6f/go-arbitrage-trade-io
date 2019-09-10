@@ -66,8 +66,10 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 
 				if intermediate == "eth" {
 					minIntermediate = model.GlobalConfig.MinETH
-				} else {
+				} else if intermediate == "btc" {
 					minIntermediate = model.GlobalConfig.MinBTC
+				} else {
+					minIntermediate = model.GlobalConfig.MinUSDT
 				}
 
 				var minSource float64
@@ -174,7 +176,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 								return
 							}
 							price = askSourceIntermediate
-							qty = utils.RoundUp(orderBAmount-orderBCommission, precSourceIntermediate)
+							qty = utils.RoundUp((orderBAmount-orderBCommission)/price, precSourceIntermediate)
 
 							TotalMinuteWeight++
 							TotalMinuteOrderWeight++

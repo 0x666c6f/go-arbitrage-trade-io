@@ -83,6 +83,7 @@ func launchArbitrages(){
 		})
 		glog.Info("Finished !")
 		<-exit
+		close(exit)
 		glog.Info("Ended")
 	}
 

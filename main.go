@@ -57,28 +57,8 @@ func main() {
 
 	model.GlobalConfig = config
 
-	balances, err := tradeio.Account()
-	if err != nil {
-		glog.V(1).Info(err.Error())
-	}
-
-	if len(balances.Balances) > 0 {
-		formattedBalances := utils.FormatBalance(balances.Balances)
-		model.GlobalConfig.MaxBTC,err = strconv.ParseFloat(formattedBalances["btc"].Available,64)
-		if err != nil {
-			glog.V(1).Info(err.Error())
-		}
-		model.GlobalConfig.MaxUSDT,err = strconv.ParseFloat(formattedBalances["usdt"].Available,64)
-		if err != nil {
-			glog.V(1).Info(err.Error())
-		}
-		model.GlobalConfig.MaxETH,err = strconv.ParseFloat(formattedBalances["eth"].Available,64)
-		if err != nil {
-			glog.V(1).Info(err.Error())
-		}
-	}
-
-
+	tradeio.UpdateCachedBalances()
+	
 	infos,err := tradeio.Info()
 	if err != nil {
 		glog.V(1).Info(err.Error())

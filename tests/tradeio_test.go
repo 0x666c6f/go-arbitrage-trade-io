@@ -1,21 +1,28 @@
 package gocryptobot_tests
 
 import (
-	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
-	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
-	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
-	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"github.com/florianpautot/go-arbitrage/global"
+	"github.com/florianpautot/go-arbitrage/utils"
 	"testing"
 	"time"
 )
 
+func TestTradeIO(t *testing.T){
+	config, err:= utils.LoadConfig("../config.yaml")
+	if err != nil {
+		return
+	}
+	global.GlobalConfig = config
+	TestInfo(t)
+	TestTickers(t)
+	TestOrder(t)
+	TestFailedOrder(t)
+	TestCancel(t)
+	TestBalances(t)
+}
+
 //TestInfo :
 func TestInfo(t *testing.T) {
-	config, err := utils.LoadConfig("../config.yaml")
-	if err != nil {
-		t.Error("Error while getting config:",err)
-	}
-	tradeio.Config = config
 	infos, err := tradeio.Info();
 	if err != nil {
 		t.Error("Error while getting info:",err)
@@ -27,11 +34,6 @@ func TestInfo(t *testing.T) {
 }
 
 func TestTickers(t *testing.T) {
-	config, err := utils.LoadConfig("../config.yaml")
-	if err != nil {
-		t.Error("Error while getting config:",err)
-	}
-	tradeio.Config = config
 	infos, err := tradeio.Tickers();
 	if err != nil {
 		t.Error("Error while getting tickers:",err)
@@ -43,12 +45,6 @@ func TestTickers(t *testing.T) {
 }
 
 func TestOrder(t *testing.T) {
-	config, err := utils.LoadConfig("../config.yaml")
-	if err != nil {
-		t.Error("Error while getting config:",err)
-	}
-	tradeio.Config = config
-
 	order := requests.Order{
 		Symbol:    "eth_btc",
 		Side:      "sell",
@@ -69,12 +65,6 @@ func TestOrder(t *testing.T) {
 }
 
 func TestFailedOrder(t *testing.T) {
-	config, err := utils.LoadConfig("../config.yaml")
-	if err != nil {
-		t.Error("Error while getting config:",err)
-	}
-	tradeio.Config = config
-
 	order := requests.Order{
 		Symbol:    "eth_btc",
 		Side:      "sell",
@@ -94,13 +84,6 @@ func TestFailedOrder(t *testing.T) {
 }
 
 func TestCancel(t *testing.T) {
-
-	config, err := utils.LoadConfig("../config.yaml")
-	if err != nil {
-		t.Error("Error while getting config:",err)
-	}
-	tradeio.Config = config
-
 	order := requests.Order{
 		Symbol:    "eth_btc",
 		Side:      "sell",
@@ -128,11 +111,6 @@ func TestCancel(t *testing.T) {
 }
 
 func TestBalances(t *testing.T) {
-	config, err := utils.LoadConfig("../config.yaml")
-	if err != nil {
-		t.Error("Error while getting config:",err)
-	}
-	tradeio.Config = config
 	balances, err := tradeio.Account();
 	if err != nil {
 		t.Error("Error while getting balances:",err)

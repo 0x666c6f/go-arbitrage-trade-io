@@ -1,32 +1,31 @@
 package arbitrage
 
 import (
-	"github.com/florianpautot/go-arbitrage-trade-io/model"
-	"github.com/florianpautot/go-arbitrage-trade-io/model/requests"
-	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
-	"github.com/florianpautot/go-arbitrage-trade-io/tradeio"
-	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"context"
+	"fmt"
+	"github.com/adshao/go-binance"
+	"github.com/florianpautot/go-arbitrage/global"
+	"github.com/florianpautot/go-arbitrage/utils"
 	"github.com/golang/glog"
 	"sort"
 	"strconv"
-	"time"
 )
 
-func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[string]responses.Symbol, symbol string, source string, intermediate string) {
-	tickerSource := tickers[symbol+"_"+source]
-	tickerIntermediate := tickers[symbol+"_"+intermediate]
-	tickerSourceIntermediate := tickers[source+"_"+intermediate]
+func EthBtcToUsdtBtcToEthBtc(tickers map[string]binance.BookTicker, infos map[string]binance.Symbol, symbol string, source string, intermediate string) {
+	tickerSource := tickers[symbol+source]
+	tickerIntermediate := tickers[symbol+intermediate]
+	tickerSourceIntermediate := tickers[source+intermediate]
 
-	var orderAResp responses.OrderResponse
-	var orderBResp responses.OrderResponse
-	var orderCResp responses.OrderResponse
+	var orderA *binance.CreateOrderResponse
+	var orderB *binance.CreateOrderResponse
+	var orderC *binance.CreateOrderResponse
 
-	if tickerSource != (responses.Ticker{}) &&
-		tickerIntermediate != (responses.Ticker{}) &&
-		tickerSourceIntermediate != (responses.Ticker{}) {
+	if tickerSource != (binance.BookTicker{}) &&
+		tickerIntermediate != (binance.BookTicker{}) &&
+		tickerSourceIntermediate != (binance.BookTicker{}) {
 
-		precSource := infos[symbol+"_"+source].BaseAssetPrecision
-		precIntermediate := infos[symbol+"_"+intermediate].BaseAssetPrecision
+		precSource := infos[symbol+source].BaseAssetPrecision
+		precIntermediate := infos[symbol+intermediate].BaseAssetPrecision
 		precSourceIntermediate := infos[source+"_"+intermediate].BaseAssetPrecision
 
 		askSource, err := strconv.ParseFloat(tickerSource.AskPrice, 64)
@@ -34,7 +33,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 			glog.V(2).Info(err.Error())
 			return
 		}
-		askSourceQty, err := strconv.ParseFloat(tickerSource.AskQty, 64)
+		askSourceQty, err := strconv.ParseFloat(tickerSource.AskQuantity, 64)
 		if err != nil {
 			glog.V(2).Info(err.Error())
 			return
@@ -44,7 +43,7 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 			glog.V(2).Info(err.Error())
 			return
 		}
-		bidIntermediateQty, err := strconv.ParseFloat(tickerIntermediate.BidQty, 64)
+		bidIntermediateQty, err := strconv.ParseFloat(tickerIntermediate.BidQuantity, 64)
 		if err != nil {
 			glog.V(2).Info(err.Error())
 			return
@@ -61,29 +60,29 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 			bonus := bidIntermediate / askSource / askSourceIntermediate
 			glog.V(3).Info(symbol, " Bonus = ", bonus)
 
-			if bonus > model.GlobalConfig.MinProfit {
+			if bonus > global.GlobalConfig.MinProfit {
 				var minIntermediate float64
 
 				if intermediate == "eth" {
-					minIntermediate = model.GlobalConfig.MinETH
+					minIntermediate = global.GlobalConfig.MinETH
 				} else if intermediate == "btc" {
-					minIntermediate = model.GlobalConfig.MinBTC
+					minIntermediate = global.GlobalConfig.MinBTC
 				} else {
-					minIntermediate = model.GlobalConfig.MinUSDT
+					minIntermediate = global.GlobalConfig.MinUSDT
 				}
 
 				var minSource float64
 				var maxSource float64
 
 				if source == "eth" {
-					minSource = model.GlobalConfig.MinETH
-					maxSource = model.GlobalConfig.MaxETH
+					minSource = global.GlobalConfig.MinETH
+					maxSource = global.GlobalConfig.MaxETH
 				} else if source == "btc" {
-					minSource = model.GlobalConfig.MinBTC
-					maxSource = model.GlobalConfig.MaxBTC
+					minSource = global.GlobalConfig.MinBTC
+					maxSource = global.GlobalConfig.MaxBTC
 				} else {
-					minSource = model.GlobalConfig.MinUSDT
-					maxSource = model.GlobalConfig.MaxUSDT
+					minSource = global.GlobalConfig.MinUSDT
+					maxSource = global.GlobalConfig.MaxUSDT
 				}
 
 				var valSourceIntermediate float64
@@ -113,104 +112,77 @@ func EthBtcToUsdtBtcToEthBtc(tickers map[string]responses.Ticker, infos map[stri
 					TotalMinuteWeight++
 					TotalMinuteOrderWeight++
 
-					orderA := requests.Order{
-						Symbol:    symbol + "_"+source,
-						Side:      "buy",
-						Type:      "limit",
-						Price:     price,
-						Quantity:  qty,
-						Timestamp: time.Now().Unix() * 1000,
-					}
-
-					orderAResp, err = tradeio.Order(orderA)
+					orderA, err = global.Binance.NewCreateOrderService().Symbol(symbol+source).
+						Side(binance.SideTypeBuy).Type(binance.OrderTypeLimit).
+						TimeInForce(binance.TimeInForceTypeGTC).Quantity(fmt.Sprintf("%f", qty)).
+						Price(fmt.Sprintf("%f", price)).Do(context.Background())
 					if err != nil {
 						glog.V(2).Info(err.Error())
 						return
 					}
-					glog.V(3).Info(symbol, " Order A Resp = ", orderAResp)
+					glog.V(2).Info(symbol, " Order A = ", orderA)
 
-					if orderAResp.Code == 0 && orderAResp.Order.Status == "Completed" {
+					if orderA.OrderID != 0 && orderA.Status == binance.OrderStatusTypeFilled {
 
 						price = bidIntermediate
-						orderAAmount, err := strconv.ParseFloat(orderAResp.Order.BaseAmount, 64)
+						orderAAmount, err := strconv.ParseFloat(orderA.ExecutedQuantity, 64)
 						if err != nil {
 							glog.V(2).Info(err.Error())
 							return
 						}
-						orderACommission, err := strconv.ParseFloat(orderAResp.Order.Commission, 64)
-						if err != nil {
-							glog.V(2).Info(err.Error())
-							return
-						}
-						qty = utils.RoundDown(orderAAmount-orderACommission, precIntermediate)
+						qty = utils.RoundDown(orderAAmount*0.999, precIntermediate)
 
 						TotalMinuteWeight++
 						TotalMinuteOrderWeight++
 
-						orderB := requests.Order{
-							Symbol:    symbol + "_" + intermediate,
-							Side:      "sell",
-							Type:      "limit",
-							Price:     price,
-							Quantity:  qty,
-							Timestamp: time.Now().Unix() * 1000,
-						}
-
-						orderBResp, err = tradeio.Order(orderB)
+						orderB, err = global.Binance.NewCreateOrderService().Symbol(symbol+intermediate).
+							Side(binance.SideTypeSell).Type(binance.OrderTypeLimit).
+							TimeInForce(binance.TimeInForceTypeGTC).Quantity(fmt.Sprintf("%f", qty)).
+							Price(fmt.Sprintf("%f", price)).Do(context.Background())
 						if err != nil {
 							glog.V(2).Info(err.Error())
 							return
 						}
-						glog.V(3).Info(symbol, " Order B = ", orderBResp)
+						glog.V(2).Info(symbol, " Order B = ", orderB)
 
-						if orderBResp.Code == 0 && orderBResp.Order.Status == "Completed" {
+						if orderB.OrderID != 0 && orderB.Status == binance.OrderStatusTypeFilled {
 
-							orderBAmount, err := strconv.ParseFloat(orderBResp.Order.Total, 64)
+							orderBAmount, err := strconv.ParseFloat(orderB.ExecutedQuantity, 64)
 							if err != nil {
 								glog.V(2).Info(err.Error())
 								return
 							}
-							orderBCommission, err := strconv.ParseFloat(orderBResp.Order.Commission, 64)
-							if err != nil {
-								glog.V(2).Info(err.Error())
-								return
-							}
+
 							price = askSourceIntermediate
-							qty = utils.RoundUp((orderBAmount-orderBCommission)/price, precSourceIntermediate)
+							qty = utils.RoundUp((orderBAmount*0.999)/price, precSourceIntermediate)
 
 							TotalMinuteWeight++
 							TotalMinuteOrderWeight++
 
-							orderC := requests.Order{
-								Symbol:    source + "_"+intermediate,
-								Side:      "buy",
-								Type:      "limit",
-								Price:     price,
-								Quantity:  qty,
-								Timestamp: time.Now().Unix() * 1000,
-							}
-
-							orderCResp, err = tradeio.Order(orderC)
+							orderC, err = global.Binance.NewCreateOrderService().Symbol(source+intermediate).
+								Side(binance.SideTypeBuy).Type(binance.OrderTypeLimit).
+								TimeInForce(binance.TimeInForceTypeGTC).Quantity(fmt.Sprintf("%f", qty)).
+								Price(fmt.Sprintf("%f", price)).Do(context.Background())
 							if err != nil {
 								glog.V(2).Info(err.Error())
 								return
 							}
-							glog.V(3).Info(symbol, " Order C = ", orderCResp)
+							glog.V(2).Info(symbol, " Order C = ", orderC)
 
-							glog.V(1).Info("Arbitrage result : <", symbol,">", " bonus = ", bonus )
+							glog.V(1).Info("Successful Arbitrage result : <", symbol,">", " bonus = ", bonus )
 
 						}
 					} else {
-						if orderAResp.Order.UnitsFilled != ""{
-							orderAfilled, err := strconv.ParseFloat(orderAResp.Order.UnitsFilled, 64)
+						if orderA.ExecutedQuantity != ""{
+							orderAfilled, err := strconv.ParseFloat(orderA.ExecutedQuantity, 64)
 							if err != nil {
 								glog.V(2).Info(err.Error())
 								return
 							}
-							if orderAResp.Code == 0 && orderAResp.Order.Status == "Working" && orderAfilled <= 0 {
+							if orderA.OrderID == 0 && orderA.Status == binance.OrderStatusTypePartiallyFilled && orderAfilled <= 0 {
 								TotalMinuteWeight++
 								TotalMinuteOrderWeight++
-								_, err := tradeio.CancelOrder(orderAResp.Order.OrderID)
+								_,err := global.Binance.NewCancelOrderService().OrderID(orderA.OrderID).Do(context.Background())
 								if err != nil {
 									glog.V(2).Infoln(err.Error())
 								}

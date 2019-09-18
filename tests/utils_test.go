@@ -1,8 +1,7 @@
 package gocryptobot_tests
 
 import (
-	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
-	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"github.com/florianpautot/go-arbitrage/utils"
 	"github.com/golang/glog"
 	"testing"
 )
@@ -26,8 +25,8 @@ func TestLoadConfig(t *testing.T) {
 		t.Error("Error while parsing config file:", err)
 	}
 
-	if config.MinProfit != 1.003 {
-		t.Error("Expected MinProfit to equal", 1, "but instead got ", config.MinProfit)
+	if config.MinProfit != 1.0032 {
+		t.Error("Expected MinProfit to equal", 1.0032, "but instead got ", config.MinProfit)
 	}
 	glog.V(2).Infoln(config)
 }

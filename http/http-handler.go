@@ -3,8 +3,8 @@ package http
 import (
 	"bytes"
 	"crypto/tls"
-	"github.com/florianpautot/go-arbitrage-trade-io/model"
-	"github.com/florianpautot/go-arbitrage-trade-io/utils"
+	"github.com/florianpautot/go-arbitrage/global"
+	"github.com/florianpautot/go-arbitrage/utils"
 	"io/ioutil"
 	"net/http"
 )
@@ -19,8 +19,8 @@ func HTTPGet(url string, args string, auth bool) ([]byte, error) {
 	req.Header.Add("content-type","application/json")
 
 	if auth {
-		req.Header.Add("Key",model.GlobalConfig.APIKey)
-		req.Header.Add("Sign", utils.GenerateSignature(args,model.GlobalConfig.APISecret))
+		req.Header.Add("Key", global.GlobalConfig.APIKey)
+		req.Header.Add("Sign", utils.GenerateSignature(args, global.GlobalConfig.APISecret))
 	}
 
 	client := &http.Client{Transport:&http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify : true},}}
@@ -39,8 +39,8 @@ func HTTPPost(url string, data []byte) ([]byte, error){
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	req.Header.Add("content-type","application/json")
 
-	req.Header.Add("Key",model.GlobalConfig.APIKey)
-	req.Header.Add("Sign", utils.GenerateSignature(string(data),model.GlobalConfig.APISecret))
+	req.Header.Add("Key", global.GlobalConfig.APIKey)
+	req.Header.Add("Sign", utils.GenerateSignature(string(data), global.GlobalConfig.APISecret))
 
 	client := &http.Client{Transport:&http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify : true},}}
 	resp, err := client.Do(req)
@@ -58,8 +58,8 @@ func HTTPPost(url string, data []byte) ([]byte, error){
 func HTTPDelete(url string, args string) ([]byte, error){
 	req, err := http.NewRequest("DELETE", url+args, nil)
 	req.Header.Add("content-type","application/json")
-	req.Header.Add("Key",model.GlobalConfig.APIKey)
-	req.Header.Add("Sign", utils.GenerateSignature(args,model.GlobalConfig.APISecret))
+	req.Header.Add("Key", global.GlobalConfig.APIKey)
+	req.Header.Add("Sign", utils.GenerateSignature(args, global.GlobalConfig.APISecret))
 
 
 	client := &http.Client{Transport:&http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify : true},}}

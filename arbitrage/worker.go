@@ -1,11 +1,11 @@
 package arbitrage
 
 import (
-	"github.com/florianpautot/go-arbitrage-trade-io/model/responses"
+	"github.com/adshao/go-binance"
 	"github.com/golang/glog"
 )
 
-func Workers(symbol string, formattedTickers map[string]responses.Ticker, infos map[string]responses.Symbol,  finish func()){
+func Workers(symbol string, formattedTickers map[string]binance.BookTicker, infos map[string]binance.Symbol,  finish func()){
 	glog.V(3).Info("Launching async worker")
 	ack := make(chan bool)
 	phase1Chan := make(chan bool)

@@ -1,18 +1,18 @@
 ---
-APIEndpoint: "https://api.exchange.trade.io"
-APIKey: 8bbcf739-e5f9-46df-8a07-884aeaa9e7d1
-APIMinuteLimit: 970
-APISecret: 100ad32f-5e7b-4a37-8c7f-e1199d1943db
+APIEndpoint: stream.binance.com:9443
+APIKey: Qt1RaVJEoEav4TGJtihynv1gr2D3kksLEW0Y8iwgq2jxUa7WpDP6kJ6x2Td5TKI0
+APIMinuteLimit: 920
+APISecret: 0XZSB0B5iGw2QDX0bqYk3E6UpXhUw2uxns3wvc2FkoXMNoY3z1dkCuBZjf7B6TMO
 Debug: false
 EndSecond: 5
-Exclusions: ktos,btnt,ttv,dog,kick,xfrc,usdt,xrr,ttv,lamb,lto,edr,pco,hot,mco,ode,nexo,mana,xsg,sidt,aoa,solve,wpp,loom,coy,link
+Exclusions: ktos,btnt,ttv,dog,kick,xfrc,usdt,xrr,ttv,lamb,lto,edr,pco,hot,mco,ode,nexo,mana,xsg,sidt,aoa,solve,wpp,coy,link,zil
 Fees: 1.001
 MaxBTC: 0.00179364
 MaxETH: 0.07138272
 MaxUSDT: 16.58796036
 MinBTC: 0.001
 MinETH: 0.01
-MinProfit: 1.003
+MinProfit: 1.0032
 MinUSDT: 10
 OrderMinuteLimit: 600
 StartSecond: 0

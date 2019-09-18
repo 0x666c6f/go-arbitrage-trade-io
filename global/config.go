@@ -1,4 +1,6 @@
-package model
+package global
+
+import binance "github.com/adshao/go-binance"
 
 type Config struct {
 	APIKey string `yaml:"APIKey"`
@@ -22,3 +24,4 @@ type Config struct {
 }
 
 var GlobalConfig Config
+var Binance *binance.Client
